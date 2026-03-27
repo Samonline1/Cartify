@@ -1,0 +1,124 @@
+
+
+
+@import "tailwindcss";
+
+.link{
+  color :white;
+    text-decoration: none; /* remove underline */
+}
+
+.link:hover{
+   color :rgb(223, 210, 210);
+    text-decoration: none; /* remove underline */
+}
+
+body::-webkit-scrollbar{
+  display: none;
+}
+
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #E3E6E6;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  text-decoration: inherit;
+  text-Transform:capitalize;
+}
+a:hover {
+  color: #d1d2db;
+  transition: all;
+  transition-duration: 500;
+}
+
+:root {
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #0f172a;
+  background-color: #e5e7eb;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  width: 100%;
+  background: #e5e7eb;
+}
+
+#root {
+  width: 100%;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+li{
+  color: rgb(218, 208, 208);
+    font-size: 14px;
+
+}
+
+button {
+  padding: 0.6em;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.25s;
+      /* background-color: #FFCE12; */
+}
+
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+
+@keyframes animate {
+   0%, 10%{
+    transform: translate(0%);
+  }
+  25%{
+    transform: translate(-100%);
+  }
+  40%{
+    transform: translate(-200%);
+  }
+  55%{
+    transform: translate(-300%);
+  }
+  70%{
+    transform: translate(-400%);
+  }
+  85%{
+    transform: translate(-500%);
+  }
+  100%{
+    transform: translate(-0%);
+  }
+}
+
+.scroll-Ani {
+  animation: animate 30s cubic-bezier(0.6, 0.05, 0.1, 0.9) infinite  ;
+}

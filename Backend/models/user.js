@@ -1,17 +1,22 @@
 const mongoose = require('mongoose');
 
-mongoose.connect(`mongodb://127.0.0.1:27017/authtest`);
 
 const userSchema = mongoose.Schema({
     name: String, 
     email : String,
     password: String, 
-    content: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "posts"
-        }
-    ]
+    cart: [
+    {
+      product: {
+        type: Number,
+        ref: "Product"
+      },
+      quantity: {
+        type: Number,
+        default: 1
+      }
+    }
+  ]
 })
 
 module.exports = mongoose.model("user", userSchema);

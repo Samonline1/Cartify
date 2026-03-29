@@ -8,7 +8,7 @@ const Profile = () => {
   const { user, setUser } = useAuth();
   const navigate = useNavigate();
 
-  console.log(user?.content.length);
+  console.log(user?.cart?.length || []);
 
   // logout
   const handleLogout = async () => {
@@ -69,7 +69,7 @@ const Profile = () => {
           {/* Cart */}
           <div className="bg-white p-5 rounded-2xl shadow space-y-2">
             <p className="font-semibold">Cart summary</p>
-            <p>Items in cart: {user?.content.length}</p>
+             <p>Items in cart: {user?.cart?.length || []}</p> 
             <button
               onClick={() => navigate("/cart")}
               className="px-4 py-2 bg-black text-white rounded-full"

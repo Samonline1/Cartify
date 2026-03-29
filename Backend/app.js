@@ -1,9 +1,14 @@
+require("dotenv").config();
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
+const connectDB = require("./models/db")
+
 // app init
 const app = express();
+
+connectDB();
 
 // parsers
 app.use(express.json());
@@ -26,6 +31,6 @@ app.get("/", (req, res) => {
 });
 
 // listen
-app.listen(3000, () => {
-  console.log("Server running on 3000");
+app.listen(process.env.PORT, () => {
+  console.log(`Server running on ${process.env.PORT}`);
 });

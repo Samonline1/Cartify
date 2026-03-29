@@ -5,7 +5,6 @@ const router = express.Router();
 const axios = require("axios");
 
 const userModel = require("../models/user");
-const postModel = require("../models/posts");
 const isLoggedIn = require("../middleswares/middlesware");
 
 
@@ -83,32 +82,34 @@ router.get("/:id", async (req, res) => {
 // add cart
  
 router.post("/cart/:id", isLoggedIn, async (req, res) => {
-  console.log("clciked");
+  console.log(req.params.id);
   
-  const productId = Number(req.params.id);
+  try {
+    const productId = Number(req.params.id); // don't convert to Number if using ObjectId
 
-  const user = await userModel.findOne({ email: req.user.email });
+    const user = await userModel.findOne({ email: req.user.email });
 
-  let existing = await postModel.findOne({
-    user: user._id,
-    productId
-  });
+    // check if product already exists in cart
+    const existingItem = user.cart.find(
+      (item) => item.product === productId
+    );
 
-  if (existing) {
-    existing.quantity += 1;
-    await existing.save();
-    return res.json({ msg: "Quantity increased", item: existing });
+    if (existingItem) {
+      existingItem.quantity += 1;
+    } else {
+      user.cart.push({
+        product: productId,
+        quantity: 1,
+      });
+    }
+
+    await user.save();
+
+    res.json({ msg: "added to cart", cart: user.cart });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: "Error updating cart" });
   }
-
-  const item = await postModel.create({
-    user: user._id,
-    productId
-  });
-
-  user.content.push(item._id);
-  await user.save();
-
-  res.json({ msg: "Added to cart", item });
 });
 
 
@@ -116,26 +117,39 @@ router.post("/cart/:id", isLoggedIn, async (req, res) => {
 // remove cart
  
 router.delete("/cart/:id", isLoggedIn, async (req, res) => {
-  const productId = Number(req.params.id);
+  try {
+    const productId = req.params.id;
 
-  const user = await userModel.findOne({ email: req.user.email });
+    // console.log("product id", productId);
+    
+    // console.log("user", req.user);
+    
 
-  const item = await postModel.findOneAndDelete({
-    user: user._id,
-    productId
-  });
+    const updatedUser = await userModel.findOneAndUpdate(
+      { email: req.user.email }, // find by email
+      {
+        $pull: {
+          cart: { product: productId }
+        }
+      },
+      { new: true } 
+    );
 
-  if (!item) {
-    return res.status(404).json({ msg: "Item not in cart" });
+    // console.log("user", updatedUser);
+    
+    if (!updatedUser) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    res.json({
+      msg: "Removed from cart",
+      cart: updatedUser.cart
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Error removing item" });
   }
-
-  user.content = user.content.filter(
-    id => id.toString() !== item._id.toString()
-  );
-
-  await user.save();
-
-  res.json({ msg: "Removed from cart" });
 });
 
 
@@ -144,28 +158,31 @@ router.delete("/cart/:id", isLoggedIn, async (req, res) => {
  
 router.get("/cart/all", isLoggedIn, async (req, res) => {
 
-  console.log(req.body);
+  // console.log(req.body);
   
-    if (!req.user) {
+     if (!req.user) {
       return res.status(401).json({ msg: "Not logged in" });
+      console.log(req.user);
     }
 
   try {
 
     const user = await userModel
       .findOne({ email: req.user.email })
-      .populate("content");
+      .populate("cart");
 
     if (!user) {
       return res.status(404).json({ msg: "User not found" });
     }
 
-    const cartItems = user.content;
+    const cartItems = user.cart;
+    // console.log(cartItems);
+    
 
     const promises = cartItems.map(async (item) => {
       try {
         const response = await axios.get(
-          `https://dummyjson.com/products/${item.productId}`
+          `https://dummyjson.com/products/${item.product}`
         );
 
         return {
@@ -181,6 +198,9 @@ router.get("/cart/all", isLoggedIn, async (req, res) => {
     const results = await Promise.all(promises);
     const fullCart = results.filter(Boolean);
 
+    // console.log(results);
+    
+
     res.json(fullCart);
 
   } catch (error) {
@@ -195,23 +215,36 @@ router.get("/cart/all", isLoggedIn, async (req, res) => {
 
  
 router.get("/cart/total", isLoggedIn, async (req, res) => {
-  const user = await userModel
+  try {
+    const user = await userModel
     .findOne({ email: req.user.email })
-    .populate("content");
+    
 
-  const promises = user.content.map(item =>
-    axios.get(`https://dummyjson.com/products/${item.productId}`)
+    // console.log(user.cart.map(p => p.product));
+
+    const validItems = user.cart.filter(item => item.product);
+    // console.log(validItems.map(p => p.product));
+
+  const promises = validItems.map(item =>
+    axios.get(`https://dummyjson.com/products/${item.product}`)
   );
 
   const responses = await Promise.all(promises);
 
+  // console.log(responses);
+
+
   let total = 0;
 
   responses.forEach((r, i) => {
-    total += r.data.price * user.content[i].quantity;
+    total += r.data.price * user.cart[i].quantity;
   });
 
   res.json({ total });
+  } catch (error) {
+    // console.error(error);
+    res.status(501).json({msg: "err calculating total!", error})
+  }
 });
 
 

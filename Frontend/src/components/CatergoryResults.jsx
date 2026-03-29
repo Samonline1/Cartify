@@ -108,16 +108,11 @@ const CategoryResults = () => {
       }
     );
 
-    console.log(res.data);
+    // console.log(res.data);
 
-    const { msg, item } = res.data;
-
-    const cartItem = {
-      productId: item.productId,
-      quantity: item.quantity
-    };
-
-    console.log(cartItem);
+    const { msg, cart } = res.data;
+    console.log(cart);
+    
 
     toast.success(msg || "Added to cart!", {
       position: "bottom-center",

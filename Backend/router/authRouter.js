@@ -25,7 +25,7 @@ router.post("/signup", async (req, res) => {
       password: hash,
     });
 
-    const token = jwt.sign({ email: user.email }, "shhhh");
+    const token = jwt.sign({ email: user.email }, "process.env.JWT_SECRET");
 
     res.cookie("token", token);
 
@@ -46,7 +46,7 @@ router.post("/login", async (req, res) => {
 
     if (!match) return res.status(400).json({ msg: "Wrong password" });
 
-    const token = jwt.sign({ email: user.email }, "shhhh");
+    const token = jwt.sign({ email: user.email }, "process.env.JWT_SECRET");
 
     res.cookie("token", token);
 

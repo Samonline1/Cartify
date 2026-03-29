@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import API from "../api";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 
 const Cart = () => {
   const [cart, setCart] = useState([]);
   const [total, setTotal] = useState(0);
 
-  
+  const navigate = useNavigate();
 
   // fetch cart items
   const fetchCart = async () => {
@@ -22,6 +23,7 @@ const Cart = () => {
           },
         }
       );
+console.log(res.data);
 
       setCart(res.data);
     } catch (err) {
@@ -83,6 +85,16 @@ fetchCart()
     fetchTotal();
   }, []);
 
+
+   if (!cart || !total) {
+    return (
+      <div className="w-full min-h-screen flex items-center justify-center bg-slate-50 text-slate-700">
+        Loading cart...
+      </div>
+    );
+  }
+
+
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-slate-100 via-slate-200 to-slate-100 text-slate-900 px-4 sm:px-6 lg:px-10 py-10">
       <div className="max-w-5xl mx-auto space-y-6">
@@ -97,8 +109,10 @@ fetchCart()
             {cart.length > 0 ? (
               [...cart].reverse().map((item) => (
                 <div
-                  key={item.id}
-                  className="flex items-center justify-between px-6 py-5"
+                onClick={() => navigate(`/search/${item.title}/${item.id}`)}
+                  key={item.id}                  
+                  className=" flex items-center justify-between px-6 py-5"
+
                 >
                   {/* left */}
                   <div className="flex items-center gap-4">
@@ -120,7 +134,7 @@ fetchCart()
                    <p className="font-semibold">
                     ₹{(item.price * item.quantity * 80).toFixed(0)}
                   </p>
-                  <p className="text-red-800 font-bold" onClick={()=> deleteItem(item.id)}>X</p>
+                  <p className="text-red-800 font-bold cursor-pointer" onClick={()=> deleteItem(item.id)}>X</p>
                </div>
                 </div>
               ))

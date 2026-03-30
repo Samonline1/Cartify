@@ -7,6 +7,9 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const userModel = require("../models/user");
 
+const isProduction = process.env.NODE_ENV === "production";
+
+
 // signup
 router.post("/signup", async (req, res) => {
   try {
@@ -27,7 +30,11 @@ router.post("/signup", async (req, res) => {
 
     const token = jwt.sign({ email: user.email }, "process.env.JWT_SECRET");
 
-    res.cookie("token", token);
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: isProduction,          // HTTPS only in production
+      sameSite: isProduction ? "none" : "lax"
+    });
 
     res.json({ msg: "Signup success", user });
 
@@ -48,11 +55,15 @@ router.post("/login", async (req, res) => {
 
     const token = jwt.sign({ email: user.email }, "process.env.JWT_SECRET");
 
-    res.cookie("token", token);
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: isProduction,          // HTTPS only in production
+      sameSite: isProduction ? "none" : "lax"
+    });
 
     res.json({ msg: "Login success", user });
     console.log(user.content);
-    
+
 
   } catch (err) {
     res.status(500).json({ msg: "Error" });
@@ -63,7 +74,7 @@ router.post("/login", async (req, res) => {
 router.get("/logout", (req, res) => {
   res.clearCookie("token");
   res.json({ msg: "Logged out" });
-  
+
 });
 
 module.exports = router;

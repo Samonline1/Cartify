@@ -1,5 +1,3 @@
 [build]
-  base    = "Frontend"
+  command = "npm --prefix Frontend install && npm --prefix Frontend run build"
   publish = "Frontend/dist"
-  command = "npm install && npm run build"
-

@@ -20,7 +20,9 @@ app.use(cookieParser());
 const allowedOrigins = [
   "http://localhost:5173",    
   "http://localhost:3000",          
-    process.env.CLIENT_URL
+  "https://cartify.netlify.app",
+  "https://caartify.netlify.app", // common typo for current deployment
+  process.env.CLIENT_URL
 ];
 
 app.use(cors({

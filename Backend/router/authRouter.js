@@ -28,12 +28,13 @@ router.post("/signup", async (req, res) => {
       password: hash,
     });
 
-    const token = jwt.sign({ email: user.email }, "process.env.JWT_SECRET");
+    const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET || "devsecret");
 
     res.cookie("token", token, {
       httpOnly: true,
       secure: isProduction,          // HTTPS only in production
-      sameSite: isProduction ? "none" : "lax"
+      sameSite: isProduction ? "none" : "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000 
     });
 
     res.json({ msg: "Signup success", user });
@@ -53,12 +54,13 @@ router.post("/login", async (req, res) => {
 
     if (!match) return res.status(400).json({ msg: "Wrong password" });
 
-    const token = jwt.sign({ email: user.email }, "process.env.JWT_SECRET");
+    const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET || "devsecret");
 
     res.cookie("token", token, {
       httpOnly: true,
       secure: isProduction,          // HTTPS only in production
-      sameSite: isProduction ? "none" : "lax"
+      sameSite: isProduction ? "none" : "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000
     });
 
     res.json({ msg: "Login success", user });

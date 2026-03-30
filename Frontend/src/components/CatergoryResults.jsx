@@ -100,7 +100,7 @@ const CategoryResults = () => {
   // add cart
  async function addtoCart(id) {
 
-  console.log(id);
+  // console.log(id);
   
   if (!id) return;
 
@@ -111,7 +111,7 @@ const CategoryResults = () => {
     // console.log(res.data);
 
     const { msg, cart } = res.data;
-    console.log(cart);
+    // console.log(cart);
     
 
     toast.success(msg || "Added to cart!", {
@@ -124,7 +124,7 @@ const CategoryResults = () => {
   }
 }
 
-console.log("API:", import.meta.env.VITE_API_URL);
+// console.log("API:", import.meta.env.VITE_API_URL); // intial issue 
 
   // render products
   return (

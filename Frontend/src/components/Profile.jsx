@@ -8,7 +8,7 @@ const Profile = () => {
   const { user, setUser } = useAuth();
   const navigate = useNavigate();
 
-  console.log(user?.cart?.length || []);
+  // console.log(user?.cart?.length || []);
 
   // logout
   const handleLogout = async () => {
@@ -55,10 +55,6 @@ const Profile = () => {
                 {user?.name || user?.username || "User"}
               </h1>
               <p className="text-black/80">{user?.email || "No email on file"}</p>
-            </div>
-            <div className="text-right">
-              <p className="text-sm text-black/60">Cart items</p>
-              <p className="text-4xl font-semibold">{user?.cart?.length || 0}</p>
             </div>
           </div>
 

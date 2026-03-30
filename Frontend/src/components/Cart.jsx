@@ -18,7 +18,7 @@ const Cart = () => {
       const res = await API.get(
         `/products/cart/all`
       );
-console.log(res.data);
+// console.log(res.data);
 
       setCart(res.data);
     } catch (err) {
@@ -30,12 +30,7 @@ console.log(res.data);
   const fetchTotal = async () => {
     try {
       const res = await API.get(
-        "/products/cart/total",
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
+        "/products/cart/total"
       );
 
       setTotal(res.data.total);
@@ -51,16 +46,11 @@ console.log(res.data);
     try {
       const pId = id
       const res = await API.delete(
-        `/products/cart/${pId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
+        `/products/cart/${pId}`
       );
 
       const {msg} = res.data;
-      console.log(msg);
+      // console.log(msg);
 
       toast.success(msg || "Product removed!", {
       position: "bottom-center",

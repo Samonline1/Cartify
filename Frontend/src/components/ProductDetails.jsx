@@ -33,7 +33,7 @@ const ProductDetails = () => {
 
   async function addtoCart(id) {
 
-  console.log(id);
+  // console.log(id);
   
   if (!id) return;
 
@@ -42,7 +42,7 @@ const ProductDetails = () => {
       `/products/cart/${id}`
     );
 
-    console.log(res.data);
+    // console.log(res.data);
 
     const { msg, item } = res.data;
 

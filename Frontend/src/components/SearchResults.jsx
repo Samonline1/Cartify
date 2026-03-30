@@ -21,7 +21,7 @@ const SearchResults = () => {
           success: "Products loaded successfully",
         }
       );
-      console.log(res.data);
+      // console.log(res.data);
 
       // normalise: backend may respond with {products: []} or []
       const normalised = Array.isArray(res.data)
@@ -41,7 +41,7 @@ const SearchResults = () => {
   // add cart
   async function addtoCart(id) {
 
-  console.log(id);
+  // console.log(id);
   
   if (!id) return;
 
@@ -50,7 +50,7 @@ const SearchResults = () => {
       `/products/cart/${id}`
     );
 
-    console.log(res.data);
+    // console.log(res.data);
 
     const { msg, item } = res.data;
 

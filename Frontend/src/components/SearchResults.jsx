@@ -7,7 +7,7 @@ import API from "../api"
 // search page
 const SearchResults = () => {
   const { name } = useParams();
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState([]); // keep an array to avoid map errors
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,12 +21,17 @@ const SearchResults = () => {
           success: "Products loaded successfully",
         }
       );
-console.log(res.data);
+      console.log(res.data);
 
-      setProducts(res.data);
+      // normalise: backend may respond with {products: []} or []
+      const normalised = Array.isArray(res.data)
+        ? res.data
+        : res.data?.products ?? [];
+      setProducts(normalised);
 
     } catch (error) {
       console.error("No products found...", error);
+      setProducts([]); // stay array to keep render safe
     }
   };
 
@@ -42,14 +47,7 @@ console.log(res.data);
 
   try {
     const res = await API.post(
-      `/products/cart/${id}`,
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`
-        },
-        withCredentials: true
-      }
+      `/products/cart/${id}`
     );
 
     console.log(res.data);
@@ -76,7 +74,7 @@ console.log(res.data);
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {products && products.length > 0 ? (
+          {Array.isArray(products) && products.length > 0 ? (
             products.map((product) => (
               <div
                 key={product.id}

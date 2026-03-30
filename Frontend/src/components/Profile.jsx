@@ -30,12 +30,12 @@ const Profile = () => {
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center px-4 bg-slate-100">
-        <div className="bg-white p-8 rounded-2xl shadow-xl text-center max-w-md w-full space-y-4">
-          <h1 className="text-2xl font-bold">Profile</h1>
+        <div className="bg-white p-8 rounded-3xl shadow-xl text-center max-w-md w-full space-y-4 border border-slate-200">
+          <h1 className="text-2xl font-bold text-slate-900">Profile</h1>
           <p className="text-slate-600">No user found. Please login.</p>
           <button
             onClick={() => navigate("/login")}
-            className="w-full py-3 rounded-xl bg-amber-400 hover:bg-amber-300 font-semibold"
+            className="w-full py-3 rounded-xl bg-slate-900 text-black hover:bg-slate-800 font-semibold"
           >
             Go to Login
           </button>
@@ -45,51 +45,38 @@ const Profile = () => {
   }
 
   return (
-    <div className="min-h-screen px-4 py-8 bg-slate-100">
-      <div className="max-w-4xl mx-auto space-y-6">
-
-        {/* Header */}
-        <div className="bg-white p-6 rounded-2xl shadow flex justify-between">
-          <div>
-            <p className="text-xs text-slate-500">Profile</p>
-            <h1 className="text-3xl font-bold">
-              {user?.name || user?.username}
-            </h1>
-            <p className="text-slate-600">{user?.email || "No email"}</p>
-
+    <div className="min-h-screen px-4 py-10 text-black">
+      <div className="max-w-3xl mx-auto">
+        <div className="bg-white border border-white/15 rounded-3xl p-8 shadow-2xl space-y-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 ">
+            <div className="space-y-1">
+              <p className="text-xs uppercase tracking-[0.2em] text-black/60">Profile</p>
+              <h1 className="text-3xl font-bold leading-tight">
+                {user?.name || user?.username || "User"}
+              </h1>
+              <p className="text-black/80">{user?.email || "No email on file"}</p>
+            </div>
+            <div className="text-right">
+              <p className="text-sm text-black/60">Cart items</p>
+              <p className="text-4xl font-semibold">{user?.cart?.length || 0}</p>
+            </div>
           </div>
-          <span className="px-4 py-3 bg-blue-100 text-blue-700 rounded-full text-xs">
-            Cartify
-          </span>
-        </div>
 
-        {/* Info */}
-        <div className="grid gap-4 lg:grid-cols-2">
-
-          {/* Cart */}
-          <div className="bg-white p-5 rounded-2xl shadow space-y-2">
-            <p className="font-semibold">Cart summary</p>
-             <p>Items in cart: {user?.cart?.length || []}</p> 
+          <div className="grid gap-4 sm:grid-cols-2">
             <button
               onClick={() => navigate("/cart")}
-              className="px-4 py-2 bg-black text-white rounded-full"
+              className="w-full rounded-2xl bg-slate-900 text-white font-semibold py-4 shadow-lg hover:-translate-y-0.5 hover:shadow-xl transition"
             >
-              View cart
+              View Cart
+            </button>
+            <button
+              onClick={handleLogout}
+              className="w-full rounded-2xl border border-black/40 text-black font-semibold py-4 hover:bg-red-600 hover:text-white transition"
+            >
+              Logout
             </button>
           </div>
         </div>
-
-        {/* Logout */}
-        <div className="bg-white p-5 rounded-2xl shadow flex justify-between items-center">
-          <p className="text-sm text-slate-600">Switch account?</p>
-          <button
-            onClick={handleLogout}
-            className="px-5 py-2 bg-red-600 text-white rounded-full"
-          >
-            Logout
-          </button>
-        </div>
-
       </div>
     </div>
   );

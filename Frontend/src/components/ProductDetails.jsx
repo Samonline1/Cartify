@@ -39,14 +39,7 @@ const ProductDetails = () => {
 
   try {
     const res = await API.post(
-      `/products/cart/${id}`,
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`
-        },
-        withCredentials: true
-      }
+      `/products/cart/${id}`
     );
 
     console.log(res.data);

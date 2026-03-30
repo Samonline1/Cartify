@@ -16,12 +16,7 @@ const Cart = () => {
     
     try {
       const res = await API.get(
-        `/products/cart/all`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
+        `/products/cart/all`
       );
 console.log(res.data);
 

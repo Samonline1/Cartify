@@ -16,7 +16,7 @@ const CategoryResults = () => {
   // active filters
   const [filters, setFilters] = useState([]);
   // filtered list
-  const [filData, setFilData] = useState();
+  const [filData, setFilData] = useState([]); // always keep an array to avoid .map errors
 
   useEffect(() => {
     // load products
@@ -33,10 +33,16 @@ const CategoryResults = () => {
           }
         );
 
-        setProducts(res.data || []);
+        // backend returns array; defensively normalise in case shape changes
+        const normalised =
+          Array.isArray(res.data) ? res.data : res.data?.products ?? [];
+
+        setProducts(normalised);
+        setFilData(normalised); // seed filtered data immediately
       } catch (error) {
         console.error("No products found...", error);
         setProducts([]);
+        setFilData([]); // keep array to prevent f.map errors in UI
       }
     };
 
@@ -61,7 +67,9 @@ const CategoryResults = () => {
       return;
     }
 
-    const filtered = products.filter((product) => {
+    const productList = Array.isArray(products) ? products : [];
+
+    const filtered = productList.filter((product) => {
       const price = product.price * 80;
       const discount = product.discountPercentage;
       const shipment = product.shippingInformation;
@@ -98,15 +106,7 @@ const CategoryResults = () => {
 
   try {
     const res = await API.post(
-      `/products/cart/${id}`,
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`
-        },
-        withCredentials: true
-      }
-    );
+      `/products/cart/${id}`);
 
     // console.log(res.data);
 
@@ -123,6 +123,8 @@ const CategoryResults = () => {
     console.error("Error adding to cart:", error);
   }
 }
+
+console.log("API:", import.meta.env.VITE_API_URL);
 
   // render products
   return (
@@ -201,12 +203,12 @@ const CategoryResults = () => {
                 >
                   <div
                     className="h-24 w-24 sm:h-28 sm:w-28 bg-slate-50 rounded-xl overflow-hidden flex items-center justify-center cursor-pointer"
-                    onClick={() => navigate(`/search/${name}/${f.id}`)}
+                    onClick={() => navigate(`/search/${name}/${f?.id}`)}
                   >
                     <img
                       className="h-full w-full object-contain"
                       src={f?.images[0]}
-                      alt={f.title}
+                      alt={f?.title}
                       loading="lazy"
                     />
                   </div>

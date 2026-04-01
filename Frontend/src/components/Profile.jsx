@@ -7,6 +7,8 @@ import { useAuth } from "../AuthContext";
 const Profile = () => {
   const { user, setUser } = useAuth();
   const navigate = useNavigate();
+  
+console.log(API);
 
   // console.log(user?.cart?.length || []);
 
@@ -33,6 +35,12 @@ const Profile = () => {
         <div className="bg-white p-8 rounded-3xl shadow-xl text-center max-w-md w-full space-y-4 border border-slate-200">
           <h1 className="text-2xl font-bold text-slate-900">Profile</h1>
           <p className="text-slate-600">No user found. Please login.</p>
+           <button
+              onClick={handleLogout}
+              className="w-full rounded-2xl border border-black/40 text-black font-semibold py-4 hover:bg-red-600 hover:text-white transition"
+            >
+              Logout
+            </button>
           <button
             onClick={() => navigate("/login")}
             className="w-full py-3 rounded-xl bg-slate-900 text-black hover:bg-slate-800 font-semibold"

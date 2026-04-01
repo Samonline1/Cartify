@@ -34,11 +34,11 @@ router.post("/signup", async (req, res) => {
       httpOnly: true,
       secure: isProduction,          // HTTPS only in production
       sameSite: isProduction ? "none" : "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000 
+      maxAge: 7 * 24 * 60 * 60 * 1000 ,
+      path: "/"
     });
 
     res.json({ msg: "Signup success", user });
-
   } catch (err) {
     res.status(500).json({ msg: "Error", err });
   }
@@ -56,11 +56,12 @@ router.post("/login", async (req, res) => {
 
     const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET || "devsecret");
 
-    res.cookie("token", token, {
+res.cookie("token", token, {
       httpOnly: true,
-      secure: isProduction,          // HTTPS only in production
+      secure: isProduction,         
       sameSite: isProduction ? "none" : "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000
+      maxAge: 7 * 24 * 60 * 60 * 1000 ,
+      path: "/"
     });
 
     res.json({ msg: "Login success", user });
@@ -76,7 +77,6 @@ router.post("/login", async (req, res) => {
 router.get("/logout", (req, res) => {
   res.clearCookie("token");
   res.json({ msg: "Logged out" });
-
 });
 
 module.exports = router;

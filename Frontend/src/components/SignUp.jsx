@@ -51,9 +51,12 @@ function SignUp() {
 
       const { msg, user } = res.data;
 
+      console.log(res.data);
+      console.log(document.cookie);
+
       // store globally
-      setUser(user);
-      localStorage.setItem("user", JSON.stringify(user));
+       setUser(user);
+       localStorage.setItem("user", JSON.stringify(user));
 
       toast.success(msg);
 

@@ -5,6 +5,10 @@ import { useNavigate } from "react-router-dom";
 
 
 const Cart = () => {
+
+  console.log(document.cookie);
+
+
   const [cart, setCart] = useState([]);
   const [total, setTotal] = useState(0);
 
@@ -74,7 +78,7 @@ fetchCart()
    if (!cart || !total) {
     return (
       <div className="w-full min-h-screen flex items-center justify-center bg-slate-50 text-slate-700">
-        Loading cart...
+        <p>Cart is Empty..</p>
       </div>
     );
   }

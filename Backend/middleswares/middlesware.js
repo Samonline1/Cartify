@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 // auth guard
 function isLoggedIn(req, res, next) {
   const token = req.cookies.token;
-  console.log("ck token", token);
+  // console.log("ck token", token);
   
 
   if (!token) {

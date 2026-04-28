@@ -10,7 +10,7 @@ const isLoggedIn = require("../middleswares/middlesware");
 
 // search
 router.get("/search", async (req, res) => {
-    console.log(req.body);
+    // console.log(req.body);
     
   try {
     const { q } = req.query;
@@ -26,7 +26,6 @@ router.get("/search", async (req, res) => {
     res.json(response.data.products);
 
   } catch (err) {
-    console.log("ji");
     
     res.status(500).json({
       msg: "Error searching products",
@@ -36,9 +35,7 @@ router.get("/search", async (req, res) => {
 });
 
 
- 
 // by category
- 
 router.get("/category/:category", async (req, res) => {
   try {
     const response = await axios.get(
@@ -56,11 +53,9 @@ router.get("/category/:category", async (req, res) => {
 });
 
 
- 
 // single product
- 
 router.get("/:id", async (req, res) => {
-  console.log(req.params.id);
+  // console.log(req.params.id);
   
   try {
     const response = await axios.get(
@@ -78,11 +73,9 @@ router.get("/:id", async (req, res) => {
 });
 
 
- 
 // add cart
- 
 router.post("/cart/:id", isLoggedIn, async (req, res) => {
-  console.log(req.params.id);
+  // console.log(req.params.id);
   
   try {
     const productId = Number(req.params.id); // don't convert to Number if using ObjectId
@@ -113,9 +106,7 @@ router.post("/cart/:id", isLoggedIn, async (req, res) => {
 });
 
 
- 
 // remove cart
- 
 router.delete("/cart/:id", isLoggedIn, async (req, res) => {
   try {
     const productId = req.params.id;
@@ -153,16 +144,86 @@ router.delete("/cart/:id", isLoggedIn, async (req, res) => {
 });
 
 
- 
+// delete cart fully 
+// router.delete("/cartDelete", isLoggedIn, async (req, res) => {
+//   try {
+//     const user = await userModel.findOne({email: req.user.email});
+//   user.cart = [];
+//   await user.save();
+//       res.json({ msg: "Cart Cleared", cart: user.cart });
+//   } catch (err) {
+//         res.status(500).json({ msg: "Error deleting cart" });
+//   }
+// });
+
+
+// checkout 
+router.post("/checkout", isLoggedIn, async (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ msg: "Unauthorized" });
+  }
+  try {
+    const email = req.user.email;
+
+    const user = await userModel.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    if (!user.cart || !user.cart.length) {
+      return res.status(400).json({ msg: "Cart is empty" });
+    }
+
+    const cartItems = user.cart;
+
+    const promises = cartItems.map(async (item) => {
+      try {
+        const productId = item.product;
+        const response = await axios.get(
+          `https://dummyjson.com/products/${productId}`
+        );
+
+        // console.log(response.data);
+        
+
+        return {
+          name: response.data.title,
+          product: productId,
+          quantity: item.quantity,
+          price: response.data.price,
+          purchasedAt: new Date()
+        };
+      } catch (err) {
+        console.error("Error fetching product:", item.product);
+        return null;
+      }
+    });
+
+    const purchasedItems = (await Promise.all(promises)).filter(Boolean);
+    user.purchased = user.purchased || [];
+
+    user.purchased.push(...purchasedItems);
+    user.cart = [];
+    await user.save();
+
+    res.status(200).json({ msg: "Checkout successful" });
+
+  } catch (error) {
+    console.error("CHECKOUT ERROR:", error);
+    res.status(500).json({ msg: "Error checkout!" });
+  }
+});
+
+
 // full cart
- 
 router.get("/cart/all", isLoggedIn, async (req, res) => {
 
-  // console.log(req.body);
+  //  console.log(req.body);
   
-     if (!req.user) {
+    if (!req.user) {
       return res.status(401).json({ msg: "Not logged in" });
-      console.log(req.user);
+      // console.log(req.user);
     }
 
   try {
@@ -176,7 +237,7 @@ router.get("/cart/all", isLoggedIn, async (req, res) => {
     }
 
     const cartItems = user.cart;
-    // console.log(cartItems);
+    // console.log(cartItems, "9");
     
 
     const promises = cartItems.map(async (item) => {
@@ -209,11 +270,7 @@ router.get("/cart/all", isLoggedIn, async (req, res) => {
   }
 });
 
-
- 
 // cart total
-
- 
 router.get("/cart/total", isLoggedIn, async (req, res) => {
   try {
     const user = await userModel
@@ -244,6 +301,47 @@ router.get("/cart/total", isLoggedIn, async (req, res) => {
   } catch (error) {
     // console.error(error);
     res.status(501).json({msg: "err calculating total!", error})
+  }
+});
+
+// full checkout 
+router.get("/checkout/all", isLoggedIn, async (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ msg: "Not logged in" });
+  }
+
+  try {
+    const user = await userModel.findOne({ email: req.user.email });
+
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+    res.json(user.purchased || []);
+
+  } catch (error) {
+    res.status(500).json({ msg: "Server error" });
+  }
+});
+
+// checkout total
+router.get("/checkout/total", isLoggedIn, async (req, res) => {
+  try {
+    const user = await userModel
+    .findOne({ email: req.user.email });
+
+    const validItems = user.purchased.filter(item => item.product);
+    // console.log(validItems);
+
+  let total = 0;
+
+  validItems.forEach((r, i) => {
+    total += r.price * user.purchased[i].quantity;
+  });
+
+  res.json({ total });
+  } catch (error) {
+    // console.error(error);
+    res.status(501).json({msg: "err calculating purchased!", error})
   }
 });
 

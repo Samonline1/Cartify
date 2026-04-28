@@ -100,14 +100,14 @@ const SearchResults = () => {
                       {product.description}
                     </p>
                     <p className="text-xs text-amber-500 font-semibold flex items-center gap-1">
-                      â­ {product.rating} Â· {product.reviews?.length || 0}
+                      ⭐ {product.rating} · {product.reviews?.length || 0}
                     </p>
                     <div className="flex items-center gap-2">
                       <span className="text-lg font-bold text-slate-900">
-                        â‚¹{(product.price * 80).toFixed(0)}
+                        ₹{(product.price * 80).toFixed(0)}
                       </span>
                       <span className="text-sm line-through text-slate-400">
-                        â‚¹{(
+                        ₹{(
                           (product.price / 100) * 80 * product.discountPercentage +
                           product.price * 80
                         ).toFixed(0)}

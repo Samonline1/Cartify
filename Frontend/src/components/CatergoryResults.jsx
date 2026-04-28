@@ -35,7 +35,11 @@ const CategoryResults = () => {
 
         // backend returns array; defensively normalise in case shape changes
         const normalised =
-          Array.isArray(res.data) ? res.data : res.data?.products ?? [];
+          Array.isArray(res.data)
+            ? res.data
+            : Array.isArray(res.data?.products)
+              ? res.data.products
+              : [];
 
         setProducts(normalised);
         setFilData(normalised); // seed filtered data immediately
@@ -194,7 +198,7 @@ const CategoryResults = () => {
         </div>
 
         <div className="flex-1">
-          {filData && filData.length > 0 ? (
+          {Array.isArray(filData) && filData.length > 0 ? (
             <div className="grid gap-4 sm:grid-cols-2">
               {filData.map((f, index) => (
                 <div
@@ -207,7 +211,7 @@ const CategoryResults = () => {
                   >
                     <img
                       className="h-full w-full object-contain"
-                      src={f?.images[0]}
+                      src={f?.images?.[0]}
                       alt={f?.title}
                       loading="lazy"
                     />

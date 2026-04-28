@@ -1,84 +1,193 @@
-﻿# Cartify
+# Cartify
 
-Full-stack demo for a small e-commerce experience. React + Vite frontend talks to a Node/Express API that proxies DummyJSON products, handles auth, and persists carts in MongoDB.
+<p align="center">
+  <strong>A polished full-stack e-commerce app built to practice real-world authentication, cart persistence, and backend state management.</strong>
+</p>
+
+<p align="center">
+  <a href="https://caartify.netlify.app/" target="_blank">Live Demo</a>
+  ·
+  <a href="#screenshots">Screenshots</a>
+  ·
+  <a href="#features">Key Features</a>
+  ·
+  <a href="#setup">Setup</a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Frontend-React%20%2B%20Vite-61DAFB?style=for-the-badge&logo=react&logoColor=white" alt="Frontend badge" />
+  <img src="https://img.shields.io/badge/Backend-Node%20%2B%20Express-339933?style=for-the-badge&logo=node.js&logoColor=white" alt="Backend badge" />
+  <img src="https://img.shields.io/badge/Database-MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white" alt="Database badge" />
+  <img src="https://img.shields.io/badge/Auth-JWT%20Cookie-FB7185?style=for-the-badge" alt="Auth badge" />
+</p>
+
+## Live Demo
+
+Use the app here: [https://caartify.netlify.app/](https://caartify.netlify.app/)
+
+## Why I Built This
+
+Most beginner e-commerce projects focus only on UI. Cartify was built to practice real full-stack concepts like authentication, API design, persistent carts, and backend state management. I wanted a project that felt like a real product flow, not just a static storefront, so the app stores user-specific cart and purchase data, hydrates product details from an API, and keeps the experience tied to a login session.
+
+## Features
+
+- User signup, login, and logout with JWT cookie auth
+- Product browsing, search, and category filtering
+- Add to cart, remove from cart, and cart total tracking
+- Checkout flow with purchase history and purchased total
+- Profile page showing expenses total
+- Persistent user cart and purchased records in MongoDB
+- Responsive UI for desktop and mobile
+
+## Screenshots
+
+### 1. Home
+![Home](./docs/screenshots/home.png)
+
+### 2. Login / Sign Up
+![Login](./docs/screenshots/login.png)
+
+### 3. Product Listing
+![Products](./docs/screenshots/products.png)
+
+### 4. Cart
+![Cart](./docs/screenshots/cart.png)
+
 
 ## Architecture
-- Frontend: React 19, Vite, TailwindCSS, react-router-dom, react-hot-toast, react-icons.
-- Backend: Node 20 + Express 5, MongoDB via Mongoose, JWT auth, bcrypt password hashing, DummyJSON product source.
-- Auth: email/password signup + login with httpOnly cookie token.
-- Cart: server-stored cart items keyed by user, synced with DummyJSON product data at read time.
 
-## Project Layout
-- /Frontend – SPA source (Vite) inside `src/` with screens/components (Navbar, NavbarMobile, CategoryResults, ProductDetails, Cart, Checkout, Profile, Search, SignUp).
-- /Backend – Express API (`app.js`, routers in `/router`, models in `/models`, auth middleware in `/middleswares`).
-- package-lock.json (root) – legacy placeholder; not used by workspaces.
+```text
+User
+  -> Frontend (React + Vite)
+  -> Backend API (Node + Express)
+  -> MongoDB (users, cart, purchased)
+  -> DummyJSON (product data)
+```
 
-## Prerequisites
-- Node.js 18+ and npm
-- MongoDB running locally or a URI you control
+## Tech Stack
+
+- Frontend: React, Vite, React Router, Tailwind CSS, React Hot Toast
+- Backend: Node.js, Express, Axios
+- Database: MongoDB, Mongoose
+- Auth: JWT stored in httpOnly cookie
+- External API: DummyJSON product catalog
+
+## How It Works
+
+```text
+Login / Signup
+  -> token cookie is issued
+
+Browse products
+  -> frontend reads product data from backend routes
+
+Add to cart
+  -> backend stores product id + quantity per user
+
+Checkout
+  -> backend moves cart items into purchased records
+
+Profile
+  -> frontend fetches checkout total and shows expenses
+```
+
+## Project Structure
+
+```text
+Cartify/
+  Frontend/
+    src/
+      components/
+      api.js
+      App.jsx
+  Backend/
+    app.js
+    router/
+    models/
+    middleswares/
+```
 
 ## Setup
-1) Install frontend deps
+
+### Prerequisites
+
+- Node.js 18+
+- npm
+- MongoDB running locally or a cloud URI
+
+### Install
+
 ```bash
 cd Frontend
 npm install
-```
-2) Install backend deps
-```bash
+
 cd ../Backend
 npm install
 ```
-3) Configure environment (Backend)
-Create `.env` in `/Backend` with at least:
-```
-MONGO_URI=mongodb://localhost:27017/cartify
-JWT_SECRET=replace_me
+
+### Environment Variables
+
+Create `Backend/.env`:
+
+```env
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_secret_key
 PORT=3000
 ```
-4) Start backend
+
+### Run the App
+
+Start the backend:
+
 ```bash
 cd Backend
 node app.js
 ```
-5) Start frontend (new terminal)
+
+Start the frontend in a second terminal:
+
 ```bash
 cd Frontend
 npm run dev
 ```
-Visit the printed Vite URL (defaults http://localhost:5173).
 
-## API (Backend)
-Base URL: http://localhost:3000/api
-- POST /auth/signup – {username, email, password}
-- POST /auth/login – {email, password}
-- GET /auth/logout – clears token cookie
-- GET /products/search?q=term
-- GET /products/category/:category
-- GET /products/:id
-- POST /products/cart/:id – add/increment (auth)
-- DELETE /products/cart/:id – remove (auth)
-- GET /products/cart/all – full cart with quantities (auth)
-- GET /products/cart/total – cart total (auth)
+## API Overview
 
-## Frontend Scripts
-- `npm run dev` – Vite dev server
-- `npm run build` – production build
-- `npm run preview` – preview built assets
+- `POST /auth/signup`
+- `POST /auth/login`
+- `GET /auth/logout`
+- `GET /products/search?q=term`
+- `GET /products/category/:category`
+- `GET /products/:id`
+- `POST /products/cart/:id`
+- `DELETE /products/cart/:id`
+- `GET /products/cart/all`
+- `GET /products/cart/total`
+- `POST /products/checkout`
+- `GET /products/checkout/all`
+- `GET /products/checkout/total`
 
-## Backend Notes
-- Uses cookie-based auth; ensure frontend requests set `withCredentials: true`.
-- CORS is permissive for local dev (origin: true, credentials: true).
-- Products are read from DummyJSON; cart items are stored in MongoDB and hydrated from DummyJSON on read.
+## Challenges Solved
 
-## Frontend Notes
-- Tailwind utility classes drive styling; gradients used for nav bars.
-- Mobile and desktop navs split into `Navbar.jsx` and `NavbarMobile.jsx`.
-- Toast notifications for UX feedback.
+- Keeping cart data tied to the logged-in user instead of local state only
+- Hydrating cart and purchase items from product ids
+- Handling checkout without losing purchase history
+- Keeping totals in sync between cart, purchased items, and profile
+- Supporting a smooth auth flow with cookie-based sessions
 
-## Troubleshooting
-- If auth calls fail, confirm `JWT_SECRET` in `.env` matches usage in code (`shhhh` currently hard-coded in routers — update to env for production).
-- If cart endpoints 401, verify cookies are sent (`withCredentials` set) and backend CORS matches the frontend origin.
-- Ensure MongoDB is running before hitting cart endpoints.
+## Future Improvements
+
+- Add real payment integration
+- Store product title and thumbnail directly in purchase records
+- Add order status tracking
+- Add wishlist support
+- Add admin product management
+- Add sorting and more advanced filters
+
+## Resume-Friendly Closing
+
+Cartify demonstrates full-stack development with React, Node.js, Express, MongoDB, JWT authentication, and persistent user-specific cart and purchase management.
 
 ## Credits
-Cartify UI by Sameer Hussain. Backend adapted for DummyJSON-powered demo.
+
+Built by Sameer Hussain.

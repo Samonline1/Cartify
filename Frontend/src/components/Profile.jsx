@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import API from "../api";
@@ -7,8 +7,7 @@ import { useAuth } from "../AuthContext";
 const Profile = () => {
   const { user, setUser } = useAuth();
   const navigate = useNavigate();
-  
-console.log(API);
+  const [expensesTotal, setExpensesTotal] = useState(0);
 
   // console.log(user?.cart?.length || []);
 
@@ -27,6 +26,21 @@ console.log(API);
       toast.error("Logout failed");
     }
   };
+
+  const fetchExpensesTotal = async () => {
+    try {
+      const res = await API.get("/products/checkout/total");
+      setExpensesTotal(res.data.total || 0);
+    } catch (err) {
+      console.error("Error fetching expenses total:", err);
+    }
+  };
+
+  useEffect(() => {
+    if (user) {
+      fetchExpensesTotal();
+    }
+  }, [user]);
 
   // if no user
   if (!user) {
@@ -79,6 +93,13 @@ console.log(API);
             >
               Logout
             </button>
+          </div>
+
+          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+            <p className="text-sm text-slate-500">Expenses total</p>
+            <p className="mt-1 text-2xl font-bold text-slate-900">
+              ₹{(expensesTotal * 80).toFixed(0)}
+            </p>
           </div>
         </div>
       </div>

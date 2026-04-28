@@ -53,9 +53,10 @@ const Home = () => {
       try {
         const res = await fetch("https://dummyjson.com/products?limit=30");
         const productData = await res.json();
-        setProducts(productData.products);
+        setProducts(Array.isArray(productData.products) ? productData.products : []);
       } catch (error) {
         console.error("Failed to load trending products", error);
+        setProducts([]);
       }
     };
     trendingProducts();
@@ -69,7 +70,8 @@ const Home = () => {
     return () => clearInterval(id);
   }, [heroBanners.length]);
 
-  const quickTiles = products.slice(0, 12);
+  const safeProducts = Array.isArray(products) ? products : [];
+  const quickTiles = safeProducts.slice(0, 12);
   const quickSlides = [];
   for (let i = 0; i < quickTiles.length; i += 4) {
     quickSlides.push(quickTiles.slice(i, i + 4));
@@ -176,7 +178,7 @@ const Home = () => {
         </div>
 
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {products.slice(8, 16).map((p) => (
+          {safeProducts.slice(8, 16).map((p) => (
             <div
               key={p.id}
               className="bg-white rounded-lg border border-gray-200 p-4 flex gap-3 items-center cursor-pointer"

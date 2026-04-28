@@ -13,7 +13,8 @@ const isProduction = process.env.NODE_ENV === "production";
 // signup
 router.post("/signup", async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { name, username, email, password } = req.body;
+    const displayName = name || username || "";
 
     let existing = await userModel.findOne({ email });
     if (existing) {
@@ -23,7 +24,7 @@ router.post("/signup", async (req, res) => {
     const hash = await bcrypt.hash(password, 10);
 
     const user = await userModel.create({
-      username,
+      name: displayName,
       email,
       password: hash,
     });
@@ -65,8 +66,6 @@ res.cookie("token", token, {
     });
 
     res.json({ msg: "Login success", user });
-    console.log(user.content);
-
 
   } catch (err) {
     res.status(500).json({ msg: "Error" });

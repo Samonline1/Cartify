@@ -25,6 +25,8 @@
 
 Use the app here: [https://caartify.netlify.app/](https://caartify.netlify.app/)
 
+Note: Backend may take a few seconds to wake on first visit due to free hosting.
+
 ## Why I Built This
 
 Most beginner e-commerce projects focus only on UI. Cartify was built to practice real full-stack concepts like authentication, API design, persistent carts, and backend state management. I wanted a project that felt like a real product flow, not just a static storefront, so the app stores user-specific cart and purchase data, hydrates product details from an API, and keeps the experience tied to a login session.
@@ -52,7 +54,6 @@ Most beginner e-commerce projects focus only on UI. Cartify was built to practic
 
 ### 4. Cart
 ![Cart](./docs/screenshots/cart.png)
-
 
 ## Architecture
 
@@ -183,10 +184,6 @@ npm run dev
 - Add wishlist support
 - Add admin product management
 - Add sorting and more advanced filters
-
-## Resume-Friendly Closing
-
-Cartify demonstrates full-stack development with React, Node.js, Express, MongoDB, JWT authentication, and persistent user-specific cart and purchase management.
 
 ## Credits
 

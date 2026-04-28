@@ -149,6 +149,7 @@ const Cart = () => {
                           src={item.thumbnail}
                           alt={item.title}
                           className="h-16 w-16 object-contain"
+                          loading="lazy"
                         />
                         <div>
                           <p className="font-semibold">{item.title}</p>
@@ -213,6 +214,7 @@ const Cart = () => {
                           src={item.thumbnail}
                           alt={item.title || `Product ${item.product}`}
                           className="h-16 w-16 rounded-xl bg-slate-100 object-contain"
+                          loading="lazy"
                         />
                         <div>
                           <p className="font-semibold">

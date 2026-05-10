@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useParams } from "react-router-dom";
-import { Bounce } from "react-toastify";
 import API from "../api"
 
 
@@ -12,6 +11,10 @@ const sizes = ["S", "M", "L"];
 const ProductDetails = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [showWakeNotice, setShowWakeNotice] = useState(() => {
+    return sessionStorage.getItem("server-warmed-up") !== "true";
+  });
   const [activeImage, setActiveImage] = useState("");
   const [activeSize, setActiveSize] = useState("M");
   const [activeColor, setActiveColor] = useState(swatchColors[0]);
@@ -19,13 +22,19 @@ const ProductDetails = () => {
 
   useEffect(() => {
     const load = async () => {
+      setIsLoading(true);
       try {
         const res = await API.get(`/products/${id}`);
         const data = await res.data;        
         setProduct(data);
         setActiveImage(data.images?.[0] || data.thumbnail);
+        sessionStorage.setItem("server-warmed-up", "true");
+        setShowWakeNotice(false);
       } catch (e) {
         console.error("No products found...", e);
+        setProduct(null);
+      } finally {
+        setIsLoading(false);
       }
     };
     load();
@@ -56,10 +65,75 @@ const ProductDetails = () => {
   }
 }
 
+  if (isLoading) {
+    return (
+      <div className="w-full min-h-screen bg-white text-slate-900">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-10 py-10">
+          {showWakeNotice && (
+            <p className="mb-4 text-sm text-amber-600">
+              Waking up server, first load may take a few seconds.
+            </p>
+          )}
+          <div className="flex flex-col lg:flex-row gap-10 animate-pulse">
+          <div className="flex-1 flex flex-col gap-4">
+            <div className="w-full bg-slate-200 rounded-3xl aspect-[4/5]" />
+            <div className="flex gap-3 overflow-x-auto">
+              {Array.from({ length: 4 }).map((_, index) => (
+                <div
+                  key={index}
+                  className="h-16 w-16 rounded-2xl bg-slate-200 shrink-0"
+                />
+              ))}
+            </div>
+          </div>
+
+          <div className="flex-1 flex flex-col gap-4">
+            <div className="h-8 w-32 bg-slate-200 rounded-full" />
+            <div className="h-4 w-40 bg-slate-200 rounded-full" />
+            <div className="h-10 w-5/6 bg-slate-200 rounded-2xl" />
+            <div className="h-4 w-48 bg-slate-200 rounded-full" />
+
+            <div className="space-y-2">
+              <div className="h-4 w-16 bg-slate-200 rounded-full" />
+              <div className="flex gap-2">
+                {Array.from({ length: 4 }).map((_, index) => (
+                  <div
+                    key={index}
+                    className="h-8 w-8 rounded-full bg-slate-200"
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <div className="h-4 w-12 bg-slate-200 rounded-full" />
+              <div className="flex gap-2">
+                {Array.from({ length: 3 }).map((_, index) => (
+                  <div
+                    key={index}
+                    className="h-10 w-10 rounded-md bg-slate-200"
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="h-4 w-24 bg-slate-200 rounded-full" />
+              <div className="h-6 w-20 bg-slate-200 rounded-full" />
+            </div>
+
+            <div className="mt-2 h-12 w-full sm:w-40 bg-slate-200 rounded-full" />
+          </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (!product) {
     return (
       <div className="w-full min-h-screen flex items-center justify-center bg-slate-50 text-slate-700">
-        Loading...
+        Product not found.
       </div>
     );
   }

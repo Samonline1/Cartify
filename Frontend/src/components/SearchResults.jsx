@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
-import { Bounce } from "react-toastify";
 import API from "../api"
 
 // search page
 const SearchResults = () => {
   const { name } = useParams();
   const [products, setProducts] = useState([]); // keep an array to avoid map errors
+  const [isLoading, setIsLoading] = useState(false);
+  const [showWakeNotice, setShowWakeNotice] = useState(() => {
+    return sessionStorage.getItem("server-warmed-up") !== "true";
+  });
   const navigate = useNavigate();
 
   useEffect(() => {
   const searchResults = async () => {
+    setIsLoading(true);
     try {
       const res = await toast.promise(
         API.get(`/products/search?q=${name}`),
@@ -28,10 +32,14 @@ const SearchResults = () => {
         ? res.data
         : res.data?.products ?? [];
       setProducts(normalised);
+      sessionStorage.setItem("server-warmed-up", "true");
+      setShowWakeNotice(false);
 
     } catch (error) {
       console.error("No products found...", error);
       setProducts([]); // stay array to keep render safe
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -71,10 +79,38 @@ const SearchResults = () => {
         <div className="mb-6">
           <p className="text-sm text-slate-500">Search results for</p>
           <h1 className="text-2xl font-bold text-slate-900">{name}</h1>
+          {isLoading && showWakeNotice && (
+            <p className="mt-2 text-sm text-amber-600">
+              Waking up server, first load may take a few seconds.
+            </p>
+          )}
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {Array.isArray(products) && products.length > 0 ? (
+          {isLoading ? (
+            Array.from({ length: 6 }).map((_, index) => (
+              <div
+                key={index}
+                className="bg-white rounded-2xl border border-slate-100 shadow-sm animate-pulse"
+              >
+                <div className="flex gap-3 p-4">
+                  <div className="h-24 w-24 sm:h-28 sm:w-28 bg-slate-200 rounded-xl" />
+                  <div className="flex flex-col gap-2 flex-1">
+                    <div className="h-4 w-3/4 bg-slate-200 rounded-full" />
+                    <div className="h-3 w-full bg-slate-200 rounded-full" />
+                    <div className="h-3 w-5/6 bg-slate-200 rounded-full" />
+                    <div className="h-3 w-1/3 bg-slate-200 rounded-full" />
+                    <div className="flex items-center gap-2">
+                      <div className="h-5 w-20 bg-slate-200 rounded-full" />
+                      <div className="h-4 w-16 bg-slate-200 rounded-full" />
+                    </div>
+                    <div className="h-3 w-1/2 bg-slate-200 rounded-full" />
+                    <div className="mt-1 h-10 w-full bg-slate-200 rounded-full" />
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : Array.isArray(products) && products.length > 0 ? (
             products.map((product) => (
               <div
                 key={product.id}

@@ -5,6 +5,8 @@ import SearchResults from "./components/SearchResults";
 import ProductDetails from "./components/ProductDetails";
 import CatergoryResults from "./components/CatergoryResults";
 import SignUp from "./components/SignUp";
+import AdminLogin from "./components/AdminLogin";
+import AdminDashboard from "./components/AdminDashboard";
 import Profile from "./components/Profile";
 import Cart from "./components/Cart";
 import Checkout from "./components/Checkout";
@@ -32,6 +34,14 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <SignUp />,
+  },
+  {
+    path: "/admin",
+    element: <AdminLogin />,
+  },
+  {
+    path: "/admin/dashboard",
+    element: <AdminDashboard />,
   },
 ]);
 

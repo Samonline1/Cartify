@@ -1,6 +1,7 @@
 // middleware/auth.js
 
 const jwt = require("jsonwebtoken");
+const jwtSecret = process.env.JWT_SECRET;
 
 // auth guard
 function isLoggedIn(req, res, next) {
@@ -13,7 +14,11 @@ function isLoggedIn(req, res, next) {
   }
 
   try {
-    const data = jwt.verify(token, process.env.JWT_SECRET || "devsecret");
+    if (!jwtSecret) {
+      return res.status(500).json({ msg: "JWT secret not configured" });
+    }
+
+    const data = jwt.verify(token, jwtSecret);
     req.user = data;
     next();
   } catch {
@@ -21,4 +26,12 @@ function isLoggedIn(req, res, next) {
   }
 }
 
-module.exports = isLoggedIn;
+function isAdmin(req, res, next) {
+  if (req.user?.role !== "admin") {
+    return res.status(403).json({ msg: "Admin access required" });
+  }
+
+  next();
+}
+
+module.exports = { isLoggedIn, isAdmin };

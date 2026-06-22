@@ -8,6 +8,7 @@ const jwt = require("jsonwebtoken");
 const userModel = require("../models/user");
 
 const isProduction = process.env.NODE_ENV === "production";
+const jwtSecret = process.env.JWT_SECRET;
 
 
 // signup
@@ -29,7 +30,14 @@ router.post("/signup", async (req, res) => {
       password: hash,
     });
 
-    const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET || "devsecret");
+    if (!jwtSecret) {
+      return res.status(500).json({ msg: "JWT secret not configured" });
+    }
+
+    const token = jwt.sign(
+      { email: user.email, role: user.role || "user" },
+      jwtSecret
+    );
 
     res.cookie("token", token, {
       httpOnly: true,
@@ -55,7 +63,14 @@ router.post("/login", async (req, res) => {
 
     if (!match) return res.status(400).json({ msg: "Wrong password" });
 
-    const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET || "devsecret");
+    if (!jwtSecret) {
+      return res.status(500).json({ msg: "JWT secret not configured" });
+    }
+
+    const token = jwt.sign(
+      { email: user.email, role: user.role || "user" },
+      jwtSecret
+    );
 
 res.cookie("token", token, {
       httpOnly: true,

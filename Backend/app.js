@@ -40,6 +40,7 @@ app.use(cors({
 
 // routes
 app.use("/api/auth", require("./router/authRouter"));
+app.use("/api/admin", require("./router/adminRouter"));
 app.use("/api/products", require("./router/productsRouter"));
 
 
@@ -49,6 +50,12 @@ app.get("/", (req, res) => {
 });
 
 // listen
-app.listen(process.env.PORT, () => {
-  console.log(`Server running on ${process.env.PORT}`);
+const port = process.env.PORT;
+
+if (!port) {
+  throw new Error("PORT is not configured");
+}
+
+app.listen(port, () => {
+  console.log(`Server running on ${port}`);
 });

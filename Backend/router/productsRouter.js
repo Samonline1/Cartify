@@ -5,7 +5,7 @@ const router = express.Router();
 const axios = require("axios");
 
 const userModel = require("../models/user");
-const isLoggedIn = require("../middleswares/middlesware");
+const { isLoggedIn } = require("../middleswares/middlesware");
 
 
 // search

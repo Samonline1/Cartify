@@ -1,5 +1,4 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Navbar from "./components/Navbar";
 import Home from "./components/Home";
 import SearchResults from "./components/SearchResults";
 import ProductDetails from "./components/ProductDetails";
@@ -11,7 +10,19 @@ import Profile from "./components/Profile";
 import Cart from "./components/Cart";
 import Checkout from "./components/Checkout";
 import Layout from "./components/Layout";
-import { Toaster } from "react-hot-toast";
+import { useAuth } from "./AuthContext";
+import { Navigate } from "react-router-dom";
+
+function AdminGuard({ children }) {
+  const { user } = useAuth();
+  const storedUser = user || JSON.parse(localStorage.getItem("user") || "null");
+
+  if (!storedUser || storedUser.role !== "admin") {
+    return <Navigate to="/admin" replace />;
+  }
+
+  return children;
+}
 
 
 
@@ -41,7 +52,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/admin/dashboard",
-    element: <AdminDashboard />,
+    element: (
+      <AdminGuard>
+        <AdminDashboard />
+      </AdminGuard>
+    ),
   },
 ]);
 

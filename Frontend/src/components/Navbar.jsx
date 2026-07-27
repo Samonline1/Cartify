@@ -48,63 +48,131 @@ const Navbar = () => {
 
   // render nav
   return (
-    <nav className="sticky top-0 z-30 bg-gradient-to-b from-blue-400 to-blue-300 backdrop-blur">
-      <div className="w-full mx-auto px-3 sm:px-4 lg:px-15 py-3 space-y-2">
-        <div className="flex items-center gap-3 text-sm text-white">
-          <button
-            onClick={() => navigate("/")}
-            className="h-11 px-4 rounded-full text-white tracking-tight flex items-center"
-            style={{ fontFamily: "'Brush Script MT', cursive", fontSize: "1.7rem", fontWeight: 700 }}
-          >
-            Cartify
-          </button>
-          <div className="flex flex-1 items-center h-11 bg-white/20 rounded-full px-3 shadow-sm">
-            <input
-              className="flex-1 h-full text-sm sm:text-base outline-none px-3"
-              placeholder="Search products..."
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && searchProducts(input)}
-            />
-            <button
-              onClick={() => searchProducts(input)}
-              className="h-9 bg-white text-slate-900 font-semibold rounded-full flex items-center"
-            >
-              <BsSearch className="text-slate-500 mx-2" />
-            </button>
-          </div>
-          <div className="flex gap-3">
-            <button
-                onClick={() => navigate("/profile")}
-            className="h-11 flex items-center gap-2 px-3 bg-white/20 rounded-full cursor-pointer"
-          >
-            <div className="h-5 w-5 rounded-full bg-white/70 border border-white/50" />
-            <span className="font-semibold text-white text-sm">
-              Profile
-            </span>
-          </button>
-          <button
-            onClick={() => navigate("/cart")}
-              className="flex items-center bg-white/20 rounded-full "
-          >
-            <LuShoppingCart className="text-2xl px-1" />
-          </button>
-          </div>
+    <nav className="sticky top-0 z-30 bg-gradient-to-b from-blue-500 to-blue-400 shadow-md">
+
+  <div className="mx-auto w-full px-3 py-3 sm:px-5 lg:px-8">
+
+{/*       MAIN NAV */}
+   
+
+    <div className="flex items-center gap-2 sm:gap-4">
+
+      {/* Logo */}
+
+      <button
+        onClick={() => navigate("/")}
+        className="shrink-0 rounded-xl px-1 text-white transition hover:scale-[1.02]"
+        style={{
+          fontFamily: "'Brush Script MT', cursive",
+          fontSize: "1.9rem",
+          fontWeight: 700,
+        }}
+      >
+        Cartify
+      </button>
+
+
+      {/* Search */}
+
+      <div className="flex h-11 min-w-0 flex-1 items-center rounded-xl bg-white px-1.5 shadow-sm sm:h-12 sm:rounded-2xl">
+
+        <BsSearch className="ml-3 shrink-0 text-slate-400" />
+
+        <input
+          className="h-full min-w-0 flex-1 bg-transparent px-3 text-sm text-slate-800 outline-none placeholder:text-slate-400 sm:text-base"
+          placeholder="Search products..."
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              searchProducts(input);
+            }
+          }}
+        />
+
+        <button
+          onClick={() => searchProducts(input)}
+          className="flex h-9 shrink-0 items-center gap-1.5 rounded-lg bg-yellow-400 px-3 text-sm font-bold text-blue-900 transition hover:bg-yellow-300 active:scale-95 sm:h-10 sm:px-4"
+        >
+          <span className="hidden sm:inline">
+            Search
+          </span>
+
+          <BsSearch className="sm:hidden" />
+        </button>
+
+      </div>
+
+
+      {/* Profile */}
+
+      <button
+        onClick={() => navigate("/profile")}
+        className="hidden h-11 shrink-0 items-center gap-2 rounded-xl bg-white/15 px-3 text-white backdrop-blur transition hover:bg-white/25 sm:flex"
+      >
+
+        <div className="flex h-7 w-7 items-center justify-center rounded-full bg-yellow-300 text-xs font-black text-blue-700">
+          U
         </div>
 
-        <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide py-2 text-xs sm:text-sm">
-          {categories.map((category) => (
-            <a
-              key={category}
-              href={`/category/${category}`}
-              className="px-3 py-1 rounded-full bg-white border border-slate-200 shadow-sm text-slate-700 whitespace-nowrap"
-            >
-              {category.replace(/-/g, " ")}
-            </a>
-          ))}
-        </div>
-      </div>
-    </nav>
+        <span className="text-sm font-bold">
+          Profile
+        </span>
+
+      </button>
+
+
+      {/* Cart */}
+
+      <button
+        onClick={() => navigate("/cart")}
+        className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-yellow-400 text-blue-900 shadow-sm transition hover:bg-yellow-300 active:scale-95"
+        aria-label="Shopping cart"
+      >
+        <LuShoppingCart className="text-xl" />
+
+        {/* cart badge */}
+        {/* 
+        <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
+          3
+        </span>
+        */}
+      </button>
+
+    </div>
+
+
+        {/* CATEGORY NAV */}
+    
+
+    <div className="mt-3 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
+
+      {/* All products */}
+
+      <a
+        href="/"
+        className="shrink-0 rounded-lg bg-yellow-400 px-4 py-2 text-xs font-bold capitalize text-blue-900 shadow-sm transition hover:bg-yellow-300 sm:text-sm"
+      >
+        All
+      </a>
+
+
+      {categories.map((category) => (
+
+        <a
+          key={category}
+          href={`/category/${category}`}
+          className="shrink-0 rounded-lg border border-white/40 bg-white px-4 py-2 text-xs font-semibold capitalize text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:border-white hover:bg-yellow-50 hover:text-blue-600 sm:text-sm"
+        >
+          {category.replace(/-/g, " ")}
+        </a>
+
+      ))}
+
+    </div>
+
+  </div>
+</nav>
   );
 };
 

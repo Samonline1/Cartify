@@ -5,44 +5,44 @@ import { useNavigate } from "react-router-dom";
 const Home = () => {
   const navigate = useNavigate();
 
-  const heroBanners = [
-    {
-      src: "https://images-eu.ssl-images-amazon.com/images/G/31/img24/Media/BAU/PC_Hero_1x-toys._CB582765723_.jpg",
-      href: "/category/vehicle",
-      title: "Sequoia Inspiring Musico.",
-      subtitle: "Making your dream music come true with Sequoia Sounds",
-    },
-    {
-      src: "https://images-eu.ssl-images-amazon.com/images/G/31/img21/MA2025/GW/BAU/Unrec/PC/934044815._CB551384116_.jpg",
-      href: "/category/womens-dresses",
-      title: "Style Refresh",
-      subtitle: "Fresh fits for every mood",
-    },
-    {
-      src: "https://images-eu.ssl-images-amazon.com/images/G/31/2025/LawnGarden/OCTOBER2025/GATEWAY/30thOCT/Door-and-bed-nets-GW-Hero-Pc._CB779327545_.jpg",
-      href: "/category/furniture",
-      title: "Comfort for Home",
-      subtitle: "Curated picks for cozy spaces",
-    },
-    {
-      src: "https://images-eu.ssl-images-amazon.com/images/G/31/img22/CEPC/Jupiter/61/updated/PC_PB_Leadup_ASIN_Date._CB801963094_.jpg",
-      href: "/category/mobile-accessories",
-      title: "Essential Accessories",
-      subtitle: "Keep your devices powered and protected",
-    },
-    {
-      src: "https://images-eu.ssl-images-amazon.com/images/G/31/img22/Wireless/devjyoti/GW/Uber/Nov/uber_new_high._CB537689643_.jpg",
-      href: "/category/smartphones",
-      title: "Flagship Smartphones",
-      subtitle: "Latest launches and top-rated picks",
-    },
-    {
-      src: "https://images-eu.ssl-images-amazon.com/images/G/31/img23/Beauty/GW/yesbank/Shampoos__conditioners_pc._CB796616147_.png",
-      href: "/category/beauty",
-      title: "Beauty Essentials",
-      subtitle: "Fresh drops & value bundles",
-    },
-  ];
+ const heroBanners = [
+  {
+    src: "https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?auto=format&fit=crop&w=1600&q=85",
+    href: "/category/vehicle",
+    title: "Fun Starts Here",
+    subtitle: "Discover colorful toys, vehicles, and more for every adventure",
+  },
+  {
+    src: "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1600&q=85",
+    href: "/category/womens-dresses",
+    title: "Refresh Your Style",
+    subtitle: "Find dresses and fashion picks made for every occasion",
+  },
+  {
+    src: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1600&q=85",
+    href: "/category/furniture",
+    title: "Make Home Feel Better",
+    subtitle: "Comfortable furniture and beautiful pieces for your space",
+  },
+  {
+    src: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1600&q=85",
+    href: "/category/mobile-accessories",
+    title: "Power Up Your Setup",
+    subtitle: "Smart accessories to keep your everyday tech ready",
+  },
+  {
+    src: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1600&q=85",
+    href: "/category/smartphones",
+    title: "Upgrade Your Phone",
+    subtitle: "Explore smartphones and the latest mobile technology",
+  },
+  {
+    src: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=1600&q=85",
+    href: "/category/beauty",
+    title: "Beauty Essentials",
+    subtitle: "Everyday skincare and beauty products worth discovering",
+  },
+];
 
   const [products, setProducts] = useState([]);
   const [heroIndex, setHeroIndex] = useState(0);
@@ -53,7 +53,9 @@ const Home = () => {
       try {
         const res = await fetch("https://dummyjson.com/products?limit=30");
         const productData = await res.json();
-        setProducts(Array.isArray(productData.products) ? productData.products : []);
+        setProducts(
+          Array.isArray(productData.products) ? productData.products : [],
+        );
       } catch (error) {
         console.error("Failed to load trending products", error);
         setProducts([]);
@@ -88,199 +90,364 @@ const Home = () => {
   const mainHero = heroBanners[heroIndex] || heroBanners[0];
 
   return (
-    <div className="min-h-screen w-full bg-gray-100 text-gray-900">
-      <section className="w-full px-4 sm:px-6 lg:px-8 py-8">
-  <div className="relative w-full h-[240px] sm:h-[350px] lg:h-[250px] xl:h-[240px] overflow-hidden rounded-3xl bg-gray-200 shadow-lg">
-    <img
-      onClick={() => navigate(mainHero.href)}
-      src={mainHero.src}
-      alt={mainHero.title}
-      loading="lazy"
-      className="h-full w-full cursor-pointer object-cover object-top transition-transform duration-500 hover:scale-105"
-    />
+  <div className="min-h-screen w-full bg-[#f8fbff] text-slate-900">
 
-    {/* Dark overlay */}
-    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent" />
+      {/* HERO BANNER */}
 
-    {/* Arrow */}
-    <button
-      onClick={() => navigate(mainHero.href)}
-      className="absolute bottom-6 right-6 flex h-12 w-12 items-center justify-center rounded-full bg-white/90 text-xl shadow-lg backdrop-blur transition hover:scale-110"
-    >
-      →
-    </button>
+  <section className="mx-auto w-full max-w-8xl px-3 py-5 sm:px-6 sm:py-5 lg:px-8">
 
-    {/* Dots */}
-    <div className="absolute bottom-6 left-6 flex gap-2">
-      {heroBanners.map((_, idx) => (
-        <button
-          key={idx}
-          onClick={() => setHeroIndex(idx)}
-          className={`h-3 w-3 rounded-full transition ${
-            idx === heroIndex
-              ? "bg-white scale-125"
-              : "bg-white/50 hover:bg-white/80"
-          }`}
-        />
-      ))}
-    </div>
-  </div>
-</section>
+    <div className="relative mx-auto h-[260px] w-full max-w-7xl overflow-hidden rounded-3xl bg-blue-100 shadow-sm sm:h-[360px] lg:h-[390px]">
 
+      <img
+        onClick={() => navigate(mainHero.href)}
+        src={mainHero.src}
+        alt={mainHero.title}
+        loading="lazy"
+        className="h-full w-full cursor-pointer object-cover object-center transition-transform duration-700 hover:scale-[1.02]"
+      />
 
-      <section className="w-full max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-10">
-        
-<div className="rounded-3xl overflow-hidden border border-gray-200 bg-white shadow-sm">
-  <div className="grid lg:grid-cols-[1.8fr,1fr]">
+      {/* Gradient */}
 
-    {/* Hero */}
-    <div className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-blue-500 to-indigo-600 p-8 lg:p-12 text-white">
+      <div className="absolute inset-0 bg-gradient-to-r from-blue-950/75 via-blue-900/30 to-transparent" />
 
-      {/* Background blobs */}
-      <div className="absolute -top-24 -right-24 h-80 w-80 rounded-full bg-white/10 blur-3xl" />
-      <div className="absolute -bottom-24 -left-20 h-72 w-72 rounded-full bg-indigo-400/20 blur-3xl" />
+      {/* Hero content */}
 
-      <span className="relative inline-flex items-center rounded-full bg-white/15 px-4 py-2 text-sm font-semibold backdrop-blur-md">
-        ✨ Featured Collection
-      </span>
+      <div className="absolute inset-0 flex items-center">
 
-      <div className="relative mt-6 max-w-2xl">
-        <h1 className="text-4xl lg:text-6xl font-black leading-tight">
-          {mainHero.title}
-        </h1>
+        <div className="max-w-xl px-6 sm:px-10 lg:px-14">
 
-        <p className="mt-5 max-w-xl text-lg leading-relaxed text-blue-100">
-          {mainHero.subtitle}
-        </p>
+          <span className="inline-flex items-center rounded-full bg-yellow-400 px-3 py-1.5 text-xs font-black text-blue-900 shadow-sm sm:text-sm">
+            Featured Collection
+          </span>
 
-        <button
-          onClick={() => navigate(mainHero.href)}
-          className="mt-8 rounded-xl bg-white px-6 py-3 font-semibold text-blue-700 transition-colors hover:bg-blue-50"
-        >
-          Shop Now →
-        </button>
+          <h1 className="mt-4 max-w-lg text-3xl font-black leading-tight text-white sm:text-4xl lg:text-5xl">
+            {mainHero.title}
+          </h1>
+
+          <p className="mt-3 max-w-md text-sm leading-6 text-blue-50 sm:text-base">
+            {mainHero.subtitle}
+          </p>
+
+          <button
+            onClick={() => navigate(mainHero.href)}
+            className="mt-5 rounded-xl bg-yellow-400 px-5 py-3 text-sm font-black text-blue-900 shadow-[0_4px_0px_#ca8a04] transition hover:-translate-y-0.5 hover:bg-yellow-300 active:translate-y-0"
+          >
+            Shop Now →
+          </button>
+
+        </div>
+
       </div>
 
-      {/* Slider */}
-      <div className="relative mt-10 overflow-hidden">
-        <div
-          className="flex transition-transform duration-700 ease-in-out will-change-transform"
-          style={{
-            transform: `translateX(-${quickIndex * 100}%)`,
-          }}
-        >
-          {quickSlides.map((slide, idx) => (
-            <div
-              key={idx}
-              className="min-w-full grid grid-cols-2 gap-4 sm:grid-cols-4"
-            >
-              {slide.map((tile) => (
-                <div
-                  key={tile.id}
-                  onClick={() =>
-                    navigate(`/search/${tile.title}/${tile.id}`)
-                  }
-                  className="group cursor-pointer rounded-2xl border border-gray-100 bg-white p-4 shadow-sm transition-colors duration-200 hover:bg-gray-50"
-                >
-                  <div className="flex items-center gap-4">
 
-                    {/* Image */}
-                    <div className="flex h-20 w-20 flex-shrink-0 items-center justify-center rounded-xl bg-gray-100 overflow-hidden">
+      {/* Arrow */}
+
+      <button
+        onClick={() => navigate(mainHero.href)}
+        className="absolute bottom-5 right-5 flex h-11 w-11 items-center justify-center rounded-full bg-white/90 text-xl font-bold text-blue-600 shadow-lg backdrop-blur transition hover:scale-110 hover:bg-white"
+        aria-label="Open featured collection"
+      >
+        →
+      </button>
+
+
+      {/* Dots */}
+
+      <div className="absolute bottom-6 left-6 flex items-center gap-2">
+
+        {heroBanners.map((_, idx) => (
+          <button
+            key={idx}
+            onClick={() => setHeroIndex(idx)}
+            aria-label={`Go to banner ${idx + 1}`}
+            className={`h-2.5 rounded-full transition-all ${
+              idx === heroIndex
+                ? "w-7 bg-yellow-400"
+                : "w-2.5 bg-white/60 hover:bg-white"
+            }`}
+          />
+        ))}
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+      {/* FEATURED COLLECTION */}
+
+  <section className="mx-auto w-full max-w-8xl px-3 py-2 sm:px-6 sm:py-5 lg:px-8">
+
+    <div className="overflow-hidden rounded-3xl border border-blue-100 bg-white shadow-sm">
+
+      <div className="grid lg:grid-cols-[0.9fr_1.5fr]">
+
+
+        {/* LEFT BRAND PANEL */}
+
+        <div className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-blue-500 to-blue-400 p-7 text-white sm:p-9 lg:p-10">
+
+          {/* Decorative circles */}
+
+          <div className="absolute -right-20 -top-20 h-56 w-56 rounded-full bg-white/10" />
+
+          <div className="absolute -bottom-24 -left-20 h-64 w-64 rounded-full bg-yellow-300/10" />
+
+          <div className="relative">
+
+            <span className="inline-flex rounded-full bg-white/15 px-3 py-1.5 text-xs font-bold backdrop-blur">
+               Cartify Picks
+            </span>
+
+            <h2 className="mt-5 max-w-md text-3xl font-black leading-tight sm:text-4xl">
+              {mainHero.title}
+            </h2>
+
+            <p className="mt-4 max-w-md text-sm leading-6 text-blue-50">
+              Discover some of the products we're loving right now.
+              Great finds, simple shopping.
+            </p>
+
+            <button
+              onClick={() => navigate(mainHero.href)}
+              className="mt-6 rounded-xl bg-yellow-400 px-5 py-3 text-sm font-black text-blue-900 shadow-[0_4px_0px_#ca8a04] transition hover:-translate-y-0.5 hover:bg-yellow-300 active:translate-y-0"
+            >
+              Explore Collection →
+            </button>
+
+          </div>
+
+
+          {/* Decorative badge */}
+
+          <div className="relative mt-10 hidden w-fit items-center gap-2 rounded-2xl bg-white/10 px-4 py-3 text-xs font-semibold backdrop-blur sm:flex">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-yellow-400 text-blue-900">
+              ✓
+            </span>
+
+            Curated for you
+          </div>
+
+        </div>
+
+
+        {/* RIGHT PRODUCT SLIDER */}
+
+        <div className="relative overflow-hidden bg-[#f8fbff] p-5 sm:p-7 lg:p-8">
+
+          <div
+            className="flex transition-transform duration-700 ease-in-out will-change-transform"
+            style={{
+              transform: `translateX(-${quickIndex * 100}%)`,
+            }}
+          >
+
+            {quickSlides.map((slide, idx) => (
+
+              <div
+                key={idx}
+                className="grid min-w-full grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-4"
+              >
+
+                {slide.map((tile) => (
+
+                  <div
+                    key={tile.id}
+                    onClick={() =>
+                      navigate(`/search/${tile.title}/${tile.id}`)
+                    }
+                    className="group cursor-pointer rounded-2xl border border-blue-100 bg-white p-3 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-lg sm:p-4"
+                  >
+
+                    {/* Product image */}
+
+                    <div className="flex aspect-square items-center justify-center overflow-hidden rounded-xl bg-slate-50">
+
                       <img
                         src={tile.thumbnail}
                         alt={tile.title}
                         loading="lazy"
-                        className="h-full w-full object-contain p-2 transition-transform duration-300 group-hover:scale-105"
+                        className="h-full w-full object-contain p-3 transition-transform duration-300 group-hover:scale-110"
                       />
+
                     </div>
 
-                    {/* Info */}
-                    <div className="min-w-0 flex-1">
-                      <h3 className="line-clamp-2 text-sm font-semibold text-gray-900">
+
+                    {/* Product info */}
+
+                    <div className="mt-3">
+
+                      <h3 className="line-clamp-2 text-xs font-bold leading-5 text-slate-800 sm:text-sm">
                         {tile.title}
                       </h3>
 
-                      <p className="mt-1 text-xs text-gray-500">
-                        {tile.brand}
+                      <p className="mt-1 truncate text-[11px] text-slate-400 sm:text-xs">
+                        {tile.brand || "Cartify pick"}
                       </p>
 
-                      <div className="mt-3 flex items-center justify-between">
-                        <span className="text-lg font-bold text-blue-600">
+
+                      <div className="mt-3 flex items-center justify-between gap-2">
+
+                        <span className="text-sm font-black text-blue-600 sm:text-base">
                           ₹{(tile.price * 80).toFixed(0)}
                         </span>
 
-                        <span className="rounded-full bg-green-100 px-2 py-1 text-xs font-semibold text-green-700">
+                        <span className="rounded-full bg-yellow-100 px-2 py-1 text-[9px] font-black text-yellow-700 sm:text-[10px]">
                           {Math.round(tile.discountPercentage)}% OFF
                         </span>
+
                       </div>
+
                     </div>
 
                   </div>
-                </div>
-              ))}
-            </div>
-          ))}
-        </div>
-      </div>
 
-    </div>
+                ))}
 
-  </div>
-</div>
+              </div>
 
+            ))}
 
-
-        <div className="mt-12">
-  <div className="flex items-center justify-between mb-6">
-    <h2 className="text-2xl font-bold text-gray-900">
-      Featured Products
-    </h2>
-  </div>
-
-  <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
-    {safeProducts.slice(8, 16).map((p) => (
-      <div
-        key={p.id}
-        onClick={() => navigate(`/search/${p.title}/${p.id}`)}
-        className="group cursor-pointer overflow-hidden rounded-2xl bg-white border border-gray-200 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
-      >
-        {/* Image */}
-        <div className="aspect-square bg-gray-100 overflow-hidden">
-          <img
-            src={p.thumbnail}
-            alt={p.title}
-            loading="lazy"
-            className="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-110"
-          />
-        </div>
-
-        {/* Content */}
-        <div className="p-4 space-y-3">
-          <h3 className="font-semibold text-gray-900 line-clamp-2 text-sm sm:text-base">
-            {p.title}
-          </h3>
-
-          <p className="text-xs sm:text-sm text-gray-500 line-clamp-2">
-            {p.description}
-          </p>
-
-          <div className="flex items-center justify-between">
-            <span className="text-lg font-bold text-gray-900">
-              ₹{(p.price * 80).toFixed(0)}
-            </span>
-
-            <span className="rounded-full bg-green-100 px-2.5 py-1 text-xs font-semibold text-green-700">
-              {p.discountPercentage}% OFF
-            </span>
           </div>
-        </div>
-      </div>
-    ))}
-  </div>
-</div>
 
-      </section>
+
+          {/* Slider controls */}
+
+          <div className="mt-5 flex items-center justify-between">
+
+            <div className="flex gap-1.5">
+
+              {quickSlides.map((_, idx) => (
+
+                <button
+                  key={idx}
+                  onClick={() => setQuickIndex(idx)}
+                  className={`h-1.5 rounded-full transition-all ${
+                    idx === quickIndex
+                      ? "w-6 bg-blue-500"
+                      : "w-1.5 bg-blue-100"
+                  }`}
+                  aria-label={`Go to products slide ${idx + 1}`}
+                />
+
+              ))}
+
+            </div>
+
+            <span className="text-xs font-semibold text-slate-400">
+              Swipe to explore →
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
     </div>
+
+  </section>
+
+
+      {/* FEATURED PRODUCTS */}
+
+  <section className="mx-auto w-full max-w-7xl px-3 pb-12 sm:px-6 lg:px-8">
+
+    {/* Heading */}
+
+    <div className="mb-5 flex items-end justify-between">
+
+      <div>
+
+        <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-500">
+          Handpicked
+        </p>
+
+        <h2 className="mt-1 text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">
+          Featured Products
+        </h2>
+
+      </div>
+
+      <button
+        onClick={() => navigate("/")}
+        className="hidden rounded-lg px-3 py-2 text-sm font-bold text-blue-500 transition hover:bg-blue-50 sm:block"
+      >
+        View all →
+      </button>
+
+    </div>
+
+
+    {/* Product grid */}
+
+    <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
+
+      {safeProducts.slice(8, 16).map((p) => (
+
+        <div
+          key={p.id}
+          onClick={() => navigate(`/search/${p.title}/${p.id}`)}
+          className="group cursor-pointer overflow-hidden rounded-2xl border border-blue-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl"
+        >
+
+          {/* Image */}
+
+          <div className="relative aspect-square overflow-hidden bg-slate-50">
+
+            <img
+              src={p.thumbnail}
+              alt={p.title}
+              loading="lazy"
+              className="h-full w-full object-contain p-4 transition-transform duration-500 group-hover:scale-110"
+            />
+
+            {/* Discount */}
+
+            <span className="absolute left-3 top-3 rounded-full bg-yellow-400 px-2.5 py-1 text-[10px] font-black text-blue-900 shadow-sm">
+              {Math.round(p.discountPercentage)}% OFF
+            </span>
+
+          </div>
+
+
+          {/* Product info */}
+
+          <div className="p-3.5 sm:p-4">
+
+            <h3 className="line-clamp-2 min-h-[40px] text-sm font-bold leading-5 text-slate-800">
+              {p.title}
+            </h3>
+
+            <p className="mt-2 line-clamp-2 text-xs leading-5 text-slate-400">
+              {p.description}
+            </p>
+
+
+            <div className="mt-4 flex items-center justify-between gap-2">
+
+              <span className="text-base font-black text-slate-900 sm:text-lg">
+                ₹{(p.price * 80).toFixed(0)}
+              </span>
+
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-sm font-bold text-blue-500 transition group-hover:bg-blue-500 group-hover:text-white">
+                →
+              </span>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      ))}
+
+    </div>
+
+  </section>
+
+</div>
   );
 };
 

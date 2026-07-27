@@ -7,20 +7,26 @@ import Footer from "./Footer";
 // app shell
 const Layout = () => {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex min-h-screen flex-col bg-[#f8fbff]">
+
+      {/* Desktop */}
       <div className="hidden lg:block">
         <Navbar />
       </div>
-      <div className="lg:hidden block">
+
+      {/* Mobile */}
+      <div className="block lg:hidden">
         <NavbarMobile />
       </div>
-      
-      <main className="flex-grow">
+
+      {/* Page content */}
+      <main className="flex-1">
         <Outlet />
       </main>
 
-     
+      {/* Footer */}
       <Footer />
+
     </div>
   );
 };

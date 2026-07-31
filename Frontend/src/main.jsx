@@ -12,20 +12,25 @@ const queryClient = new QueryClient();
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <App/>
+      <AuthProvider>
+        <App />
         <Toaster
-        position="top-center"
-        toastOptions={{
-          duration: 3000,
-          style: {
-            background: '#333',
-            color: '#fff',
-            fontSize: '20px',
-          },
-        }}
+          position="bottom-left"
+          toastOptions={{
+            className: "cartify-toast",
+            success: {
+              className: "cartify-toast cartify-toast-success",
+              iconTheme: {
+                primary: "#2563eb",
+                secondary: "#facc15",
+              },
+            },
+            error: {
+              className: "cartify-toast cartify-toast-error",
+            },
+          }}
         />
-        </AuthProvider>
+      </AuthProvider>
     </QueryClientProvider>
   </StrictMode>,
 )

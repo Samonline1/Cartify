@@ -25,8 +25,6 @@ function AdminGuard({ children }) {
 }
 
 
-
-
 const router = createBrowserRouter([
   {
     element: <Layout />,
@@ -59,89 +57,6 @@ const router = createBrowserRouter([
     ),
   },
 ]);
-
-// const router = createBrowserRouter([
-//   {
-//     path: "/",
-//     element: (
-//       <div>
-//         <Navbar />
-//         <Home />
-//       </div>
-//     ),
-//   },
-//   {
-//     path: "/:username",
-//     element: (
-//       <div>
-//         <Navbar />
-//         <Home />
-//       </div>
-//     ),
-//   },
-//   {
-//     path: "/search/:name",
-//     element: (
-//       <div>
-//         <Navbar />
-//         <SearchResults />
-//       </div>
-//     ),
-//   },
-//     {
-//     path: "/search/:name/:id",
-//     element: (
-//       <div>
-//         <Navbar />
-//         <ProductDetails />
-//       </div>
-//     ),
-//   },
-//    {
-//     path: "/category/:name",
-//     element: (
-//       <div>
-//         <Navbar />
-//         <CatergoryResults />
-//       </div>
-//     ),
-//   },
-//   {
-//     path: "/login",
-//     element: (
-//       <div>
-//         <SignUp/>
-//       </div>
-//     ),
-//   },
-//    {
-//     path: "/profile",
-//     element: (
-//       <div>
-//         <Navbar />
-//         <Profile/>
-//       </div>
-//     ),
-//   },
-//   {
-//     path: "/cart",
-//     element: (
-//       <div>
-//         <Navbar />
-//         <Cart/>
-//       </div>
-//     ),
-//   },
-//   {
-//     path: "/checkout",
-//     element: (
-//       <div>
-//         <Navbar />
-//         <Checkout/>
-//       </div>
-//     ),
-//   },
-// ]);
 
 const App = () => {
   return <RouterProvider router={router} />;

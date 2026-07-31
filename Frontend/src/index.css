@@ -1,19 +1,16 @@
-
-
-
 @import "tailwindcss";
 
-.link{
-  color :white;
-    text-decoration: none; /* remove underline */
+.link {
+  color: white;
+  text-decoration: none; /* remove underline */
 }
 
-.link:hover{
-   color :rgb(223, 210, 210);
-    text-decoration: none; /* remove underline */
+.link:hover {
+  color: rgb(223, 210, 210);
+  text-decoration: none; /* remove underline */
 }
 
-body::-webkit-scrollbar{
+body::-webkit-scrollbar {
   display: none;
 }
 
@@ -24,7 +21,7 @@ body::-webkit-scrollbar{
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #E3E6E6;
+  background-color: #e3e6e6;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -34,7 +31,7 @@ body::-webkit-scrollbar{
 
 a {
   text-decoration: inherit;
-  text-Transform:capitalize;
+  text-transform: capitalize;
 }
 a:hover {
   color: #d1d2db;
@@ -43,7 +40,11 @@ a:hover {
 }
 
 :root {
-  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-family:
+    "Inter",
+    system-ui,
+    -apple-system,
+    sans-serif;
   line-height: 1.5;
   font-weight: 400;
   color: #0f172a;
@@ -70,10 +71,9 @@ h1 {
   line-height: 1.1;
 }
 
-li{
+li {
   color: rgb(218, 208, 208);
-    font-size: 14px;
-
+  font-size: 14px;
 }
 
 button {
@@ -82,9 +82,8 @@ button {
   font-family: inherit;
   cursor: pointer;
   transition: border-color 0.25s;
-      /* background-color: #FFCE12; */
+  /* background-color: #FFCE12; */
 }
-
 
 .scrollbar-hide {
   -ms-overflow-style: none;
@@ -94,31 +93,50 @@ button {
   display: none;
 }
 
-
 @keyframes animate {
-   0%, 10%{
+  0%,
+  10% {
     transform: translate(0%);
   }
-  25%{
+  25% {
     transform: translate(-100%);
   }
-  40%{
+  40% {
     transform: translate(-200%);
   }
-  55%{
+  55% {
     transform: translate(-300%);
   }
-  70%{
+  70% {
     transform: translate(-400%);
   }
-  85%{
+  85% {
     transform: translate(-500%);
   }
-  100%{
+  100% {
     transform: translate(-0%);
   }
 }
 
 .scroll-Ani {
-  animation: animate 30s cubic-bezier(0.6, 0.05, 0.1, 0.9) infinite  ;
+  animation: animate 30s cubic-bezier(0.6, 0.05, 0.1, 0.9) infinite;
+}
+
+.cartify-toast {
+  border-radius: 16px !important;
+  padding: 14px 18px !important;
+  background: #fff !important;
+  color: #1e3a8a !important;
+  border: 2px solid #60a5fa !important;
+  font-weight: 600 !important;
+  box-shadow: 0 12px 30px rgba(37, 99, 235, 0.12) !important;
+}
+
+.cartify-toast-success {
+  border-color: #2563eb !important;
+}
+
+.cartify-toast-error {
+  border-color: #ef4444 !important;
+  color: #b91c1c !important;
 }

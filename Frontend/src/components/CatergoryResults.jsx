@@ -2,13 +2,12 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import API from "../api";
+import NoProducts from "./NoProducts";
 
 // category results
 const CategoryResults = () => {
-  // const users = JSON.parse(localStorage.getItem("users"));
-  // route param
+
   const { name } = useParams();
-  
 
   // product data
   const [products, setProducts] = useState([]);
@@ -28,29 +27,33 @@ const CategoryResults = () => {
 
       setIsLoading(true);
       try {
-        const res = await toast.promise(
-          API.get(`/products/category/${name}`),
-          {
-            loading: "Loading products...",
-            error: "Failed to load products",
-            success: "Products loaded successfully",
-          }
-        );
+        toast.loading("Loading products...", { id: "search" });
+
+        const res = await API.get(`/products/category/${name}`);
+
+        const products = Array.isArray(res.data)
+          ? res.data
+          : (res.data?.products ?? []);
+
+        if (products.length === 0) {
+          toast.error("No products found", { id: "search" });
+        } else {
+          toast.success(`${products.length} products found`, { id: "search" });
+        }
 
         // backend returns array; defensively normalise in case shape changes
-        const normalised =
-          Array.isArray(res.data)
-            ? res.data
-            : Array.isArray(res.data?.products)
-              ? res.data.products
-              : [];
+        const normalised = Array.isArray(res.data)
+          ? res.data
+          : Array.isArray(res.data?.products)
+            ? res.data.products
+            : [];
 
         setProducts(normalised);
         setFilData(normalised); // seed filtered data immediately
         sessionStorage.setItem("server-warmed-up", "true");
         setShowWakeNotice(false);
       } catch (error) {
-        console.error("No products found...", error);
+        toast.error("No products found...", error);
         setProducts([]);
         setFilData([]); // keep array to prevent f.map errors in UI
       } finally {
@@ -108,35 +111,33 @@ const CategoryResults = () => {
     setFilData(filtered);
   }, [products, filters]);
 
-
   // add cart
- async function addtoCart(id) {
+  async function addtoCart(id) {
+    if (!id) return;
 
-  // console.log(id);
-  
-  if (!id) return;
+    try {
+      const res = await API.post(`/products/cart/${id}`);
 
-  try {
-    const res = await API.post(
-      `/products/cart/${id}`);
+      const { msg, cart } = res.data;
 
-    // console.log(res.data);
+      toast.success(msg || "Added to cart!", {
+        autoClose: 5000,
+      });
+    } catch (error) {
+      if (error.response?.status === 401) {
+        toast.error(error.response.data.msg, {
+          autoClose: 5000,
+        });
 
-    const { msg, cart } = res.data;
-    // console.log(cart);
-    
+        navigate("/login");
+        return;
+      }
 
-    toast.success(msg || "Added to cart!", {
-      position: "bottom-center",
-      autoClose: 5000
-    });
-
-  } catch (error) {
-    console.error("Error adding to cart:", error);
+      toast.error("Something went wrong", {
+        autoClose: 5000,
+      });
+    }
   }
-}
-
-// console.log("API:", import.meta.env.VITE_API_URL); // intial issue 
 
   // render products
   return (
@@ -149,8 +150,8 @@ const CategoryResults = () => {
           <label className="block">
             <input
               className="appearance-none w-5 h-5 rounded-full border-2 border-gray-400 bg-white
-                 checked:bg-blue-600 checked:border-blue-600 
-                 focus:ring-2 focus:ring-blue-400 cursor-pointer transition-all duration-200"
+                checked:bg-blue-600 checked:border-blue-600 
+                focus:ring-2 focus:ring-blue-400 cursor-pointer transition-all duration-200"
               type="checkbox"
               value={"Ships overnight"}
               checked={filters.includes("Ships overnight")}
@@ -170,8 +171,8 @@ const CategoryResults = () => {
             <label key={label} className="block">
               <input
                 className="appearance-none w-5 h-5 rounded-full border-2 border-gray-400 bg-white
-                 checked:bg-blue-600 checked:border-blue-600 
-                 focus:ring-2 focus:ring-blue-400 cursor-pointer transition-all duration-200"
+                checked:bg-blue-600 checked:border-blue-600 
+                focus:ring-2 focus:ring-blue-400 cursor-pointer transition-all duration-200"
                 type="checkbox"
                 value={label}
                 checked={filters.includes(label)}
@@ -193,8 +194,8 @@ const CategoryResults = () => {
             <label key={label} className="block">
               <input
                 className="appearance-none w-5 h-5 rounded-full border-2 border-gray-400 bg-white
-                 checked:bg-blue-600 checked:border-blue-600 
-                 focus:ring-2 focus:ring-blue-400 cursor-pointer transition-all duration-200"
+                checked:bg-blue-600 checked:border-blue-600 
+                focus:ring-2 focus:ring-blue-400 cursor-pointer transition-all duration-200"
                 type="checkbox"
                 value={label}
                 checked={filters.includes(label)}
@@ -289,7 +290,11 @@ const CategoryResults = () => {
             </div>
           ) : (
             <div className="flex items-center justify-center bg-white rounded-2xl p-10 text-slate-700">
-              No products found for this category.
+              <NoProducts
+                title={`Nothing in this category "${name}"`}
+
+                description="Try exploring another category or search for something else."
+              />
             </div>
           )}
         </div>

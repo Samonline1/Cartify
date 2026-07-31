@@ -24,6 +24,8 @@ function isLoggedIn(req, res, next) {
   } catch {
     res.status(401).json({ msg: "Invalid token" });
   }
+
+  next();
 }
 
 function isAdmin(req, res, next) {

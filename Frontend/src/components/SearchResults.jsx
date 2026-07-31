@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import API from "../api"
+import NoProducts from "./NoProducts";
 
 // search page
 const SearchResults = () => {
@@ -14,64 +15,73 @@ const SearchResults = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-  const searchResults = async () => {
-    setIsLoading(true);
-    try {
-      const res = await toast.promise(
-        API.get(`/products/search?q=${name}`),
-        {
-          loading: "Loading products...",
-          error: "Failed to load products",
-          success: "Products loaded successfully",
+    const searchResults = async () => {
+      setIsLoading(true);
+      try {
+        toast.loading("Loading products...", { id: "search" });
+
+        const res = await API.get(`/products/search?q=${name}`);
+
+        const products = Array.isArray(res.data)
+          ? res.data
+          : res.data?.products ?? [];
+
+        if (products.length === 0) {
+          toast.error("No products found", { id: "search" });
+        } else {
+          toast.success(`${products.length} products found`, { id: "search" });
         }
-      );
-      // console.log(res.data);
 
-      // normalise: backend may respond with {products: []} or []
-      const normalised = Array.isArray(res.data)
-        ? res.data
-        : res.data?.products ?? [];
-      setProducts(normalised);
-      sessionStorage.setItem("server-warmed-up", "true");
-      setShowWakeNotice(false);
+        // normalise: backend may respond with {products: []} or []
+        const normalised = Array.isArray(res.data)
+          ? res.data
+          : res.data?.products ?? [];
+        setProducts(normalised);
+        sessionStorage.setItem("server-warmed-up", "true");
+        setShowWakeNotice(false);
 
-    } catch (error) {
-      console.error("No products found...", error);
-      setProducts([]); // stay array to keep render safe
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      } catch (error) {
+        toast.error("No products found...", error);
+        setProducts([]); // stay array to keep render safe
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  if (name) searchResults();
-}, [name]);
+    if (name) searchResults();
+  }, [name]);
 
   // add cart
   async function addtoCart(id) {
 
-  // console.log(id);
-  
-  if (!id) return;
+    if (!id) return;
 
-  try {
-    const res = await API.post(
-      `/products/cart/${id}`
-    );
+    try {
+      const res = await API.post(
+        `/products/cart/${id}`);
 
-    // console.log(res.data);
+      const { msg, cart } = res.data;
 
-    const { msg, item } = res.data;
+      toast.success(msg || "Added to cart!", {
+        autoClose: 5000
+      });
 
+    } catch (error) {
 
-    toast.success(msg || "Added to cart!", {
-      position: "bottom-center",
-      autoClose: 5000
-    });
+      if (error.response?.status === 401) {
+        toast.error(error.response.data.msg, {
+          autoClose: 5000
+        });
 
-  } catch (error) {
-    console.error("Error adding to cart:", error);
+        navigate("/login");
+        return;
+      }
+
+      toast.error("Something went wrong", {
+        autoClose: 5000
+      });;
+    }
   }
-}
 
   return (
     <div className="w-full min-h-screen bg-slate-50 px-4 sm:px-6 lg:px-10 py-6">
@@ -164,7 +174,11 @@ const SearchResults = () => {
             ))
           ) : (
             <div className="sm:col-span-2 lg:col-span-3 bg-white border border-slate-200 rounded-2xl p-6 text-center text-slate-700">
-              No products found for "{name}".
+
+              <NoProducts
+                title={`No products found for "${name}"`}
+                description="Try exploring another category or search for something else."
+              />
             </div>
           )}
         </div>

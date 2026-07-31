@@ -56,7 +56,7 @@ const ProductDetails = () => {
     const { msg, item } = res.data;
 
     toast.success(msg || "Added to cart!", {
-      position: "bottom-center",
+      
       autoClose: 5000
     });
 

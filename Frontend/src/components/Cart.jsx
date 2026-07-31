@@ -81,7 +81,7 @@ const Cart = () => {
       setShowThankYou(true);
 
       toast.success(res.data?.msg || "Checkout successful", {
-        position: "bottom-center",
+        
         autoClose: 5000,
       });
     } catch (error) {
@@ -95,7 +95,7 @@ const Cart = () => {
       const res = await API.delete(`/products/cart/${id}`);
 
       toast.success(res.data?.msg || "Product removed!", {
-        position: "bottom-center",
+        
         autoClose: 5000,
       });
 

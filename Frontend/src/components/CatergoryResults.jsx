@@ -3,6 +3,7 @@ import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import API from "../api";
 import NoProducts from "./NoProducts";
+import Pagination from "./Pagination";
 
 // category results
 const CategoryResults = () => {
@@ -12,9 +13,7 @@ const CategoryResults = () => {
   // product data
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [showWakeNotice, setShowWakeNotice] = useState(() => {
-    return sessionStorage.getItem("server-warmed-up") !== "true";
-  });
+
   // active filters
   const [filters, setFilters] = useState([]);
   // filtered list
@@ -50,8 +49,6 @@ const CategoryResults = () => {
 
         setProducts(normalised);
         setFilData(normalised); // seed filtered data immediately
-        sessionStorage.setItem("server-warmed-up", "true");
-        setShowWakeNotice(false);
       } catch (error) {
         toast.error("No products found...", error);
         setProducts([]);
@@ -65,6 +62,18 @@ const CategoryResults = () => {
   }, [name]);
 
   const navigate = useNavigate();
+
+  // pagination calc
+
+  const pageSize = 6;
+  const [currentPage, setCurrentPage] = useState(0);
+
+  const pages = Math.ceil(filData.length / pageSize);
+
+  const startIndex = currentPage * pageSize;
+  const endIndex = startIndex + pageSize;
+
+  const paginatedProducts = filData.slice(startIndex, endIndex);
 
   // filter toggle
   const handleCheckboxChange = (event) => {
@@ -206,97 +215,117 @@ const CategoryResults = () => {
           ))}
         </div>
 
-        <div className="flex-1">
-          {isLoading && showWakeNotice && (
-            <p className="mb-4 text-sm text-amber-600">
-              Waking up server, first load may take a few seconds.
-            </p>
-          )}
-          {isLoading ? (
-            <div className="grid gap-4 sm:grid-cols-2">
-              {Array.from({ length: 6 }).map((_, index) => (
-                <div
-                  key={index}
-                  className="bg-white rounded-2xl border border-slate-100 shadow-sm animate-pulse flex gap-3 p-4"
-                >
-                  <div className="h-24 w-24 sm:h-28 sm:w-28 bg-slate-200 rounded-xl" />
-                  <div className="flex flex-col gap-2 flex-1">
-                    <div className="h-4 w-3/4 bg-slate-200 rounded-full" />
-                    <div className="h-3 w-full bg-slate-200 rounded-full" />
-                    <div className="h-3 w-5/6 bg-slate-200 rounded-full" />
-                    <div className="h-3 w-1/3 bg-slate-200 rounded-full" />
-                    <div className="flex items-center gap-2">
-                      <div className="h-5 w-20 bg-slate-200 rounded-full" />
-                      <div className="h-4 w-16 bg-slate-200 rounded-full" />
-                    </div>
-                    <div className="h-3 w-1/2 bg-slate-200 rounded-full" />
-                    <div className="mt-1 h-10 w-full bg-slate-200 rounded-full" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : Array.isArray(filData) && filData.length > 0 ? (
-            <div className="grid gap-4 sm:grid-cols-2">
-              {filData.map((f, index) => (
-                <div
-                  key={index}
-                  className="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg transition flex gap-3 p-4"
-                >
-                  <div
-                    className="h-24 w-24 sm:h-28 sm:w-28 bg-slate-50 rounded-xl overflow-hidden flex items-center justify-center cursor-pointer"
-                    onClick={() => navigate(`/search/${name}/${f?.id}`)}
-                  >
-                    <img
-                      className="h-full w-full object-contain"
-                      src={f?.images?.[0]}
-                      alt={f?.title}
-                      loading="lazy"
-                    />
-                  </div>
-                  <div className="flex flex-col gap-1 flex-1">
-                    <p className="text-base font-semibold text-slate-900 line-clamp-2">
-                      {f.title}
-                    </p>
-                    <p className="text-xs text-slate-600 line-clamp-2">
-                      {f.description || "Great choice for your collection"}
-                    </p>
-                    <p className="text-xs text-amber-500 font-semibold flex items-center gap-1">
-                      ⭐ {f.rating} · {f.reviews?.length || 0}
-                    </p>
-                    <div className="flex items-center gap-2">
-                      <span className="text-lg font-bold text-slate-900">
-                        ₹{(f.price * 80).toFixed(0)}
-                      </span>
-                      <span className="text-sm line-through text-slate-400">
-                        ₹
-                        {(
-                          (f.price / 100) * 80 * f.discountPercentage +
-                          f.price * 80
-                        ).toFixed(0)}
-                      </span>
-                    </div>
-                    <p className="text-xs text-slate-500">
-                      Ships: {f.shippingInformation || "See details"}
-                    </p>
-                    <button
-                      onClick={() => addtoCart(f.id)}
-                      className="mt-1 w-full rounded-full bg-slate-900 text-white font-semibold py-2 hover:bg-slate-800 transition"
-                    >
-                      Add to cart
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="flex items-center justify-center bg-white rounded-2xl p-10 text-slate-700">
-              <NoProducts
-                title={`Nothing in this category "${name}"`}
 
-                description="Try exploring another category or search for something else."
+
+
+        <div>
+          {/*  pagination */}
+          {pages > 1 && (
+            <div className="flex py-2 mt-[-50px]">
+              <Pagination
+                currentPage={currentPage}
+                pages={pages}
+                setCurrentPage={setCurrentPage}
               />
             </div>
           )}
+
+
+          <div className="flex-1">
+            {isLoading ? (
+              <div className="grid gap-4 sm:grid-cols-2">
+                {Array.from({ length: 6 }).map((_, index) => (
+                  <div
+                    key={index}
+                    className="bg-white rounded-2xl border border-slate-100 shadow-sm animate-pulse flex gap-3 p-4"
+                  >
+                    <div className="h-24 w-24 sm:h-28 sm:w-28 bg-slate-200 rounded-xl" />
+                    <div className="flex flex-col gap-2 flex-1">
+                      <div className="h-4 w-3/4 bg-slate-200 rounded-full" />
+                      <div className="h-3 w-full bg-slate-200 rounded-full" />
+                      <div className="h-3 w-5/6 bg-slate-200 rounded-full" />
+                      <div className="h-3 w-1/3 bg-slate-200 rounded-full" />
+                      <div className="flex items-center gap-2">
+                        <div className="h-5 w-20 bg-slate-200 rounded-full" />
+                        <div className="h-4 w-16 bg-slate-200 rounded-full" />
+                      </div>
+                      <div className="h-3 w-1/2 bg-slate-200 rounded-full" />
+                      <div className="mt-1 h-10 w-full bg-slate-200 rounded-full" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : Array.isArray(paginatedProducts) && paginatedProducts.length > 0 ? (
+              <div className="grid gap-4 sm:grid-cols-2">
+                {paginatedProducts.map((f, index) => (
+                  <div
+                    key={index}
+                    className="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg transition flex gap-3 p-4"
+                  >
+                    <div
+                      className="h-24 w-24 sm:h-28 sm:w-28 bg-slate-50 rounded-xl overflow-hidden flex items-center justify-center cursor-pointer"
+                      onClick={() => navigate(`/search/${name}/${f?.id}`)}
+                    >
+                      <img
+                        className="h-full w-full object-contain"
+                        src={f?.images?.[0]}
+                        alt={f?.title}
+                        loading="lazy"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1 flex-1">
+                      <p className="text-base font-semibold text-slate-900 line-clamp-2">
+                        {f.title}
+                      </p>
+                      <p className="text-xs text-slate-600 line-clamp-2">
+                        {f.description || "Great choice for your collection"}
+                      </p>
+                      <p className="text-xs text-amber-500 font-semibold flex items-center gap-1">
+                        ⭐ {f.rating} · {f.reviews?.length || 0}
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg font-bold text-slate-900">
+                          ₹{(f.price * 80).toFixed(0)}
+                        </span>
+                        <span className="text-sm line-through text-slate-400">
+                          ₹
+                          {(
+                            (f.price / 100) * 80 * f.discountPercentage +
+                            f.price * 80
+                          ).toFixed(0)}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-500">
+                        Ships: {f.shippingInformation || "See details"}
+                      </p>
+                      <button
+                        onClick={() => addtoCart(f.id)}
+                        className="mt-1 w-full rounded-full bg-slate-900 text-white font-semibold py-2 hover:bg-slate-800 transition"
+                      >
+                        Add to cart
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex items-center justify-center bg-white rounded-2xl p-10 text-slate-700">
+                <NoProducts
+                  title={`Nothing in this category "${name}"`}
+
+                  description="Try exploring another category or search for something else."
+                />
+              </div>
+            )}
+          </div>
+
+          <div className="flex">
+            <Pagination
+              currentPage={currentPage}
+              pages={pages}
+              setCurrentPage={setCurrentPage}
+            />
+          </div>
         </div>
       </div>
     </div>

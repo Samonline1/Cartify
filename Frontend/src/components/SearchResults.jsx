@@ -3,15 +3,13 @@ import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import API from "../api"
 import NoProducts from "./NoProducts";
+import Pagination from "./Pagination";
 
 // search page
 const SearchResults = () => {
   const { name } = useParams();
   const [products, setProducts] = useState([]); // keep an array to avoid map errors
   const [isLoading, setIsLoading] = useState(false);
-  const [showWakeNotice, setShowWakeNotice] = useState(() => {
-    return sessionStorage.getItem("server-warmed-up") !== "true";
-  });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -37,8 +35,6 @@ const SearchResults = () => {
           ? res.data
           : res.data?.products ?? [];
         setProducts(normalised);
-        sessionStorage.setItem("server-warmed-up", "true");
-        setShowWakeNotice(false);
 
       } catch (error) {
         toast.error("No products found...", error);
@@ -50,6 +46,18 @@ const SearchResults = () => {
 
     if (name) searchResults();
   }, [name]);
+
+  // pagination calc
+  
+  const pageSize = 6;
+  const [currentPage, setCurrentPage] = useState(0);
+
+  const pages = Math.ceil(products.length / pageSize);
+
+  const startIndex = currentPage * pageSize;
+  const endIndex = startIndex + pageSize;
+
+  const paginatedProducts = products.slice(startIndex, endIndex);
 
   // add cart
   async function addtoCart(id) {
@@ -87,14 +95,21 @@ const SearchResults = () => {
     <div className="w-full min-h-screen bg-slate-50 px-4 sm:px-6 lg:px-10 py-6">
       <div className="max-w-6xl mx-auto">
         <div className="mb-6">
-          <p className="text-sm text-slate-500">Search results for</p>
-          <h1 className="text-2xl font-bold text-slate-900">{name}</h1>
-          {isLoading && showWakeNotice && (
-            <p className="mt-2 text-sm text-amber-600">
-              Waking up server, first load may take a few seconds.
-            </p>
-          )}
+          <p className="text-sm text-slate-500">Search results for  <span className=" font-bold text-slate-900">"{name}"</span></p>
+
+          {/* Pagination */}
+          <div className="flex">
+            <Pagination
+              currentPage={currentPage}
+              pages={pages}
+              setCurrentPage={setCurrentPage}
+            />
+          </div>
         </div>
+
+
+
+
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {isLoading ? (
@@ -120,8 +135,9 @@ const SearchResults = () => {
                 </div>
               </div>
             ))
-          ) : Array.isArray(products) && products.length > 0 ? (
-            products.map((product) => (
+          ) : Array.isArray(paginatedProducts) && paginatedProducts.length > 0 ? (
+            paginatedProducts.map((product) => (
+
               <div
                 key={product.id}
                 className="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg transition flex flex-col sm:flex-col"

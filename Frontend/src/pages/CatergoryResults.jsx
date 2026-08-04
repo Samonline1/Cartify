@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import API from "../api";
-import NoProducts from "./NoProducts";
-import Pagination from "./Pagination";
+import NoProducts from "../components/NoProducts";
+import Pagination from "../components/Pagination";
 
 // category results
 const CategoryResults = () => {

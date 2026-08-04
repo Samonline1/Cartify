@@ -1,5 +1,3 @@
-// routes/authRouter.js
-
 const express = require("express");
 const router = express.Router();
 
@@ -11,7 +9,6 @@ const isProduction = process.env.NODE_ENV === "production";
 const jwtSecret = process.env.JWT_SECRET;
 
 
-// signup
 router.post("/signup", async (req, res) => {
   try {
     const { name, username, email, password } = req.body;
@@ -41,7 +38,7 @@ router.post("/signup", async (req, res) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: isProduction,          // HTTPS only in production
+      secure: isProduction,
       sameSite: isProduction ? "none" : "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000 ,
       path: "/"
@@ -53,7 +50,6 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-// login
 router.post("/login", async (req, res) => {
   try {
     const user = await userModel.findOne({ email: req.body.email });
@@ -72,9 +68,9 @@ router.post("/login", async (req, res) => {
       jwtSecret
     );
 
-res.cookie("token", token, {
+    res.cookie("token", token, {
       httpOnly: true,
-      secure: isProduction,         
+      secure: isProduction,
       sameSite: isProduction ? "none" : "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000 ,
       path: "/"
@@ -87,7 +83,6 @@ res.cookie("token", token, {
   }
 });
 
-// logout
 router.get("/logout", (req, res) => {
   res.clearCookie("token");
   res.json({ msg: "Logged out" });

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { useParams } from "react-router-dom";
-import API from "../api"
+import { useNavigate, useParams } from "react-router-dom";
+import API from "../api";
 
 
 const swatchColors = ["#f1239e", "#2663ff", "#f97316", "#0ea5e9"];
@@ -12,12 +12,11 @@ const ProductDetails = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [showWakeNotice, setShowWakeNotice] = useState(() => {
-    return sessionStorage.getItem("server-warmed-up") !== "true";
-  });
   const [activeImage, setActiveImage] = useState("");
   const [activeSize, setActiveSize] = useState("M");
   const [activeColor, setActiveColor] = useState(swatchColors[0]);
+  const navigate = useNavigate();
+
 
 
   useEffect(() => {
@@ -25,11 +24,9 @@ const ProductDetails = () => {
       setIsLoading(true);
       try {
         const res = await API.get(`/products/${id}`);
-        const data = await res.data;        
+        const data = await res.data;
         setProduct(data);
         setActiveImage(data.images?.[0] || data.thumbnail);
-        sessionStorage.setItem("server-warmed-up", "true");
-        setShowWakeNotice(false);
       } catch (e) {
         console.error("No products found...", e);
         setProduct(null);
@@ -42,88 +39,89 @@ const ProductDetails = () => {
 
   async function addtoCart(id) {
 
-  // console.log(id);
-  
-  if (!id) return;
+    if (!id) return;
 
-  try {
-    const res = await API.post(
-      `/products/cart/${id}`
-    );
+    try {
+      const res = await API.post(
+        `/products/cart/${id}`);
 
-    // console.log(res.data);
+      const { msg, cart } = res.data;
 
-    const { msg, item } = res.data;
+      toast.success(msg || "Added to cart!", {
+        autoClose: 5000
+      });
 
-    toast.success(msg || "Added to cart!", {
-      
-      autoClose: 5000
-    });
+    } catch (error) {
 
-  } catch (error) {
-    console.error("Error adding to cart:", error);
+      if (error.response?.status === 401) {
+        toast.error(error.response.data.msg, {
+          autoClose: 5000
+        });
+
+        navigate("/login");
+        return;
+      }
+
+      toast.error("Something went wrong", {
+        autoClose: 5000
+      });;
+    }
   }
-}
 
   if (isLoading) {
     return (
       <div className="w-full min-h-screen bg-white text-slate-900">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-10 py-10">
-          {showWakeNotice && (
-            <p className="mb-4 text-sm text-amber-600">
-              Waking up server, first load may take a few seconds.
-            </p>
-          )}
           <div className="flex flex-col lg:flex-row gap-10 animate-pulse">
-          <div className="flex-1 flex flex-col gap-4">
-            <div className="w-full bg-slate-200 rounded-3xl aspect-[4/5]" />
-            <div className="flex gap-3 overflow-x-auto">
-              {Array.from({ length: 4 }).map((_, index) => (
-                <div
-                  key={index}
-                  className="h-16 w-16 rounded-2xl bg-slate-200 shrink-0"
-                />
-              ))}
-            </div>
-          </div>
-
-          <div className="flex-1 flex flex-col gap-4">
-            <div className="h-8 w-32 bg-slate-200 rounded-full" />
-            <div className="h-4 w-40 bg-slate-200 rounded-full" />
-            <div className="h-10 w-5/6 bg-slate-200 rounded-2xl" />
-            <div className="h-4 w-48 bg-slate-200 rounded-full" />
-
-            <div className="space-y-2">
-              <div className="h-4 w-16 bg-slate-200 rounded-full" />
-              <div className="flex gap-2">
+            <div className="flex-1 flex flex-col gap-4">
+              <div className="w-full bg-slate-200 rounded-3xl aspect-[4/5]" />
+              <div className="flex gap-3 overflow-x-auto">
                 {Array.from({ length: 4 }).map((_, index) => (
                   <div
                     key={index}
-                    className="h-8 w-8 rounded-full bg-slate-200"
+                    className="h-16 w-16 rounded-2xl bg-slate-200 shrink-0"
                   />
                 ))}
               </div>
             </div>
 
-            <div className="space-y-2">
-              <div className="h-4 w-12 bg-slate-200 rounded-full" />
-              <div className="flex gap-2">
-                {Array.from({ length: 3 }).map((_, index) => (
-                  <div
-                    key={index}
-                    className="h-10 w-10 rounded-md bg-slate-200"
-                  />
-                ))}
+            <div className="flex-1 flex flex-col gap-4">
+              <div className="h-8 w-32 bg-slate-200 rounded-full" />
+              <div className="h-4 w-40 bg-slate-200 rounded-full" />
+              <div className="h-10 w-5/6 bg-slate-200 rounded-2xl" />
+              <div className="h-4 w-48 bg-slate-200 rounded-full" />
+
+              <div className="space-y-2">
+                <div className="h-4 w-16 bg-slate-200 rounded-full" />
+                <div className="flex gap-2">
+                  {Array.from({ length: 4 }).map((_, index) => (
+                    <div
+                      key={index}
+                      className="h-8 w-8 rounded-full bg-slate-200"
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
 
-            <div className="flex items-center gap-3">
-              <div className="h-4 w-24 bg-slate-200 rounded-full" />
-              <div className="h-6 w-20 bg-slate-200 rounded-full" />
-            </div>
+              <div className="space-y-2">
+                <div className="h-4 w-12 bg-slate-200 rounded-full" />
+                <div className="flex gap-2">
+                  {Array.from({ length: 3 }).map((_, index) => (
+                    <div
+                      key={index}
+                      className="h-10 w-10 rounded-md bg-slate-200"
+                    />
+                  ))}
+                </div>
+              </div>
 
-            <div className="mt-2 h-12 w-full sm:w-40 bg-slate-200 rounded-full" />
-          </div>
+              <div className="flex items-center gap-3">
+                <div className="h-4 w-24 bg-slate-200 rounded-full" />
+                <div className="h-6 w-20 bg-slate-200 rounded-full" />
+              </div>
+
+              <div className="mt-2 h-12 w-full sm:w-40 bg-slate-200 rounded-full" />
+            </div>
           </div>
         </div>
       </div>
@@ -159,9 +157,8 @@ const ProductDetails = () => {
               <button
                 key={i}
                 onClick={() => setActiveImage(img)}
-                className={`h-16 w-16 rounded-2xl border ${
-                  activeImage === img ? "border-slate-900" : "border-slate-200"
-                } overflow-hidden flex items-center justify-center bg-white`}
+                className={`h-16 w-16 rounded-2xl border ${activeImage === img ? "border-slate-900" : "border-slate-200"
+                  } overflow-hidden flex items-center justify-center bg-white`}
               >
                 <img
                   src={img}
@@ -192,9 +189,8 @@ const ProductDetails = () => {
                 <button
                   key={c}
                   onClick={() => setActiveColor(c)}
-                  className={`h-8 w-8 rounded-full border ${
-                    activeColor === c ? "border-slate-900 scale-110" : "border-slate-200"
-                  }`}
+                  className={`h-8 w-8 rounded-full border ${activeColor === c ? "border-slate-900 scale-110" : "border-slate-200"
+                    }`}
                   style={{ backgroundColor: c }}
                 />
               ))}
@@ -208,11 +204,10 @@ const ProductDetails = () => {
                 <button
                   key={s}
                   onClick={() => setActiveSize(s)}
-                  className={`h-10 w-10 rounded-md border text-sm font-semibold ${
-                    activeSize === s
+                  className={`h-10 w-10 rounded-md border text-sm font-semibold ${activeSize === s
                       ? "bg-slate-900 text-white border-slate-900"
                       : "bg-white text-slate-900 border-slate-200"
-                  }`}
+                    }`}
                 >
                   {s}
                 </button>

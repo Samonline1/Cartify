@@ -9,7 +9,7 @@ const { isLoggedIn, isAdmin } = require("../middleswares/middlesware");
 const router = express.Router();
 const isProduction = process.env.NODE_ENV === "production";
 const jwtSecret = process.env.JWT_SECRET;
-const productsApiBase = process.env.PRODUCTS_API_BASE || "https://dummyjson.com/products";
+const productsApiBase = process.env.CATALOG_BASE_URL || "";
 
 router.post("/login", async (req, res) => {
   try {

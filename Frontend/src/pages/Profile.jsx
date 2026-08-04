@@ -76,12 +76,12 @@ const Profile = () => {
               Go to Login →
             </button>
 
-            <button
+            {/* <button
               onClick={handleLogout}
               className="w-full rounded-xl border-2 border-slate-100 py-3.5 font-semibold text-slate-600 transition hover:border-red-100 hover:bg-red-50 hover:text-red-500"
             >
               Logout
-            </button>
+            </button> */}
 
           </div>
         </div>

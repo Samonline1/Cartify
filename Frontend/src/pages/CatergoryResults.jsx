@@ -4,9 +4,14 @@ import { useNavigate, useParams } from "react-router-dom";
 import API from "../api";
 import NoProducts from "../components/NoProducts";
 import Pagination from "../components/Pagination";
+import ProductQuickView from "../components/ProductQuickView";
+import {Eye } from "lucide-react";
 
 // category results
 const CategoryResults = () => {
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
+  const [open, setOpen] = useState(false);
 
   const { name } = useParams();
 
@@ -215,8 +220,11 @@ const CategoryResults = () => {
           ))}
         </div>
 
-
-
+        <ProductQuickView
+          open={open}
+          productId={selectedProduct}
+          onClose={() => setOpen(false)}
+        />
 
         <div>
           {/*  pagination */}
@@ -229,7 +237,6 @@ const CategoryResults = () => {
               />
             </div>
           )}
-
 
           <div className="flex-1">
             {isLoading ? (
@@ -255,7 +262,8 @@ const CategoryResults = () => {
                   </div>
                 ))}
               </div>
-            ) : Array.isArray(paginatedProducts) && paginatedProducts.length > 0 ? (
+            ) : Array.isArray(paginatedProducts) &&
+              paginatedProducts.length > 0 ? (
               <div className="grid gap-4 sm:grid-cols-2">
                 {paginatedProducts.map((f, index) => (
                   <div
@@ -274,9 +282,22 @@ const CategoryResults = () => {
                       />
                     </div>
                     <div className="flex flex-col gap-1 flex-1">
-                      <p className="text-base font-semibold text-slate-900 line-clamp-2">
-                        {f.title}
-                      </p>
+                      <div className="flex items-start justify-between gap-3">
+                        <p className="line-clamp-2 flex-1 text-base font-semibold text-slate-900">
+                          {f?.title}
+                        </p>
+
+                        <button
+                          onClick={() => {
+                            setSelectedProduct(f.id);
+                            setOpen(true);
+                          }}
+                          className="flex shrink-0 items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition-all duration-200 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-600"
+                        >
+                          <Eye size={16} />
+                          View
+                        </button>
+                      </div>
                       <p className="text-xs text-slate-600 line-clamp-2">
                         {f.description || "Great choice for your collection"}
                       </p>
@@ -312,7 +333,6 @@ const CategoryResults = () => {
               <div className="flex items-center justify-center bg-white rounded-2xl p-10 text-slate-700">
                 <NoProducts
                   title={`Nothing in this category "${name}"`}
-
                   description="Try exploring another category or search for something else."
                 />
               </div>

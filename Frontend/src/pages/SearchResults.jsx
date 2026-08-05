@@ -4,6 +4,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import API from "../api"
 import NoProducts from "../components/NoProducts";
 import Pagination from "../components/Pagination";
+import ProductQuickView from "../components/ProductQuickView"
+import { Eye } from "lucide-react";
+
 
 // search page
 const SearchResults = () => {
@@ -11,6 +14,10 @@ const SearchResults = () => {
   const [products, setProducts] = useState([]); // keep an array to avoid map errors
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+
+    const [selectedProduct, setSelectedProduct] = useState(null);
+  
+    const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const searchResults = async () => {
@@ -108,7 +115,11 @@ const SearchResults = () => {
         </div>
 
 
-
+        <ProductQuickView
+    open={open}
+    productId={selectedProduct}
+    onClose={()=>setOpen(false)}
+/>
 
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -155,9 +166,22 @@ const SearchResults = () => {
                     />
                   </div>
                   <div className="flex flex-col gap-1 flex-1">
-                    <h3 className="text-base font-semibold text-slate-900 line-clamp-2">
-                      {product.title}
-                    </h3>
+<div className="flex items-start justify-between gap-3">
+  <p className="line-clamp-2 flex-1 text-base font-semibold text-slate-900">
+    {product?.title}
+  </p>
+
+  <button
+    onClick={() => {
+      setSelectedProduct(product.id);
+      setOpen(true);
+    }}
+    className="flex shrink-0 items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition-all duration-200 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-600"
+  >
+    <Eye size={16} />
+    View
+  </button>
+</div>
                     <p className="text-xs text-slate-600 line-clamp-2">
                       {product.description}
                     </p>

@@ -49,9 +49,6 @@ const Navbar = () => {
     navigate(`/search/${search.trim()}`);
   };
 
-
-  console.log(user)
-
   // render nav
   return (
     <nav className="sticky top-0 z-30 bg-gradient-to-b from-blue-500 to-blue-400 shadow-md">

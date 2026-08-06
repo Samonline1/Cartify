@@ -1,9 +1,9 @@
 import { X } from "lucide-react";
-import { useProduct } from "../hooks/queries/useProduct";
+import { useProductId } from "../hooks/queries/useProductId";
 import { useNavigate } from "react-router-dom";
 
 function productQuickView({ open, onClose, productId }) {
-    const { data: product, isLoading, error } = useProduct(productId);
+    const { data: product, isLoading, error } = useProductId(productId);
 
     const navigate = useNavigate();
     if (!open) return null;

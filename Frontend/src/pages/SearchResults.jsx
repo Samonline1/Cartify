@@ -15,9 +15,9 @@ const SearchResults = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-    const [selectedProduct, setSelectedProduct] = useState(null);
-  
-    const [open, setOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const searchResults = async () => {
@@ -55,16 +55,26 @@ const SearchResults = () => {
   }, [name]);
 
   // pagination calc
-  
+
   const pageSize = 6;
   const [currentPage, setCurrentPage] = useState(0);
 
-  const pages = Math.ceil(products.length / pageSize);
 
   const startIndex = currentPage * pageSize;
   const endIndex = startIndex + pageSize;
 
-  const paginatedProducts = products.slice(startIndex, endIndex);
+
+  const matching = products?.filter((p) =>
+    p.title
+      .toLowerCase()
+      .split(" ")
+      .some((word) => word.startsWith(name.toLowerCase())),
+  );
+
+  const pages = Math.ceil(matching.length / pageSize);
+
+
+  const paginatedProducts = matching?.slice(startIndex, endIndex);
 
   // add cart
   async function addtoCart(id) {
@@ -116,10 +126,10 @@ const SearchResults = () => {
 
 
         <ProductQuickView
-    open={open}
-    productId={selectedProduct}
-    onClose={()=>setOpen(false)}
-/>
+          open={open}
+          productId={selectedProduct}
+          onClose={() => setOpen(false)}
+        />
 
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -166,22 +176,22 @@ const SearchResults = () => {
                     />
                   </div>
                   <div className="flex flex-col gap-1 flex-1">
-<div className="flex items-start justify-between gap-3">
-  <p className="line-clamp-2 flex-1 text-base font-semibold text-slate-900">
-    {product?.title}
-  </p>
+                    <div className="flex items-start justify-between gap-3">
+                      <p className="line-clamp-2 flex-1 text-base font-semibold text-slate-900">
+                        {product?.title}
+                      </p>
 
-  <button
-    onClick={() => {
-      setSelectedProduct(product.id);
-      setOpen(true);
-    }}
-    className="flex shrink-0 items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition-all duration-200 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-600"
-  >
-    <Eye size={16} />
-    View
-  </button>
-</div>
+                      <button
+                        onClick={() => {
+                          setSelectedProduct(product.id);
+                          setOpen(true);
+                        }}
+                        className="flex shrink-0 items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition-all duration-200 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-600"
+                      >
+                        <Eye size={16} />
+                        View
+                      </button>
+                    </div>
                     <p className="text-xs text-slate-600 line-clamp-2">
                       {product.description}
                     </p>

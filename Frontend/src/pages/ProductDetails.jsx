@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import API from "../api";
-
+import { Share2 } from "lucide-react";
 
 const swatchColors = ["#f1239e", "#2663ff", "#f97316", "#0ea5e9"];
 const sizes = ["S", "M", "L"];
@@ -16,8 +16,6 @@ const ProductDetails = () => {
   const [activeSize, setActiveSize] = useState("M");
   const [activeColor, setActiveColor] = useState(swatchColors[0]);
   const navigate = useNavigate();
-
-
 
   useEffect(() => {
     const load = async () => {
@@ -37,25 +35,41 @@ const ProductDetails = () => {
     load();
   }, [id]);
 
-  async function addtoCart(id) {
+  const handleShare = async () => {
+    const url = window.location.href;
 
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: "Check out this product",
+          text: "I found this product on Cartify",
+          url,
+        });
+      } catch (error) {
+        // User cancelled the share dialog
+        console.log("Share cancelled");
+      }
+    } else {
+      await navigator.clipboard.writeText(url);
+      toast.success("Link copied!");
+    }
+  };
+
+  async function addtoCart(id) {
     if (!id) return;
 
     try {
-      const res = await API.post(
-        `/products/cart/${id}`);
+      const res = await API.post(`/products/cart/${id}`);
 
       const { msg, cart } = res.data;
 
       toast.success(msg || "Added to cart!", {
-        autoClose: 5000
+        autoClose: 5000,
       });
-
     } catch (error) {
-
       if (error.response?.status === 401) {
         toast.error(error.response.data.msg, {
-          autoClose: 5000
+          autoClose: 5000,
         });
 
         navigate("/login");
@@ -63,8 +77,8 @@ const ProductDetails = () => {
       }
 
       toast.error("Something went wrong", {
-        autoClose: 5000
-      });;
+        autoClose: 5000,
+      });
     }
   }
 
@@ -145,12 +159,23 @@ const ProductDetails = () => {
         {/* Gallery */}
         <div className="flex-1 flex flex-col gap-4">
           <div className="relative w-full bg-slate-50 rounded-3xl shadow overflow-hidden flex items-center justify-center aspect-[4/5]">
-            <img
-              src={activeImage}
-              alt={product.title}
-              className="h-full w-full object-contain"
-              loading="lazy"
-            />
+            <div className="relative h-full w-full">
+              {/* Share button */}
+              <button
+                onClick={handleShare}
+                aria-label="Share product"
+                className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white/90 text-slate-700 shadow-md backdrop-blur-sm transition-all hover:scale-105 hover:bg-blue-50 hover:text-blue-600 active:scale-95"
+              >
+                <Share2 className="h-4 w-4" />
+              </button>
+
+              <img
+                src={activeImage}
+                alt={product.title}
+                className="h-full w-full object-contain"
+                loading="lazy"
+              />
+            </div>
           </div>
           <div className="flex gap-3 overflow-x-auto scrollbar-hide">
             {(product.images || []).map((img, i) => (
@@ -173,7 +198,9 @@ const ProductDetails = () => {
 
         {/* Details */}
         <div className="flex-1 flex flex-col gap-4">
-          <p className="text-3xl font-black">₹{(product.price * 80).toFixed(0)}</p>
+          <p className="text-3xl font-black">
+            ₹{(product.price * 80).toFixed(0)}
+          </p>
           <p className="text-sm text-slate-500">Free shipping over ₹50</p>
           <h1 className="text-3xl sm:text-4xl font-black leading-tight">
             {product.title || "Handcrafted ceramic vase."}
@@ -189,7 +216,9 @@ const ProductDetails = () => {
                 <button
                   key={c}
                   onClick={() => setActiveColor(c)}
-                  className={`h-8 w-8 rounded-full border ${activeColor === c ? "border-slate-900 scale-110" : "border-slate-200"
+                  className={`h-8 w-8 rounded-full border ${activeColor === c
+                    ? "border-slate-900 scale-110"
+                    : "border-slate-200"
                     }`}
                   style={{ backgroundColor: c }}
                 />
@@ -205,8 +234,8 @@ const ProductDetails = () => {
                   key={s}
                   onClick={() => setActiveSize(s)}
                   className={`h-10 w-10 rounded-md border text-sm font-semibold ${activeSize === s
-                      ? "bg-slate-900 text-white border-slate-900"
-                      : "bg-white text-slate-900 border-slate-200"
+                    ? "bg-slate-900 text-white border-slate-900"
+                    : "bg-white text-slate-900 border-slate-200"
                     }`}
                 >
                   {s}

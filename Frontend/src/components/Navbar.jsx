@@ -3,6 +3,7 @@ import toast from "react-hot-toast";
 import { BsSearch } from "react-icons/bs";
 import { LuShoppingCart } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
+import {Link} from "react-router-dom";
 import { useAuth } from "../AuthContext";
 import { CgProfile } from "react-icons/cg";
 import { useProductByName } from "../hooks/queries/useProductName";
@@ -307,13 +308,14 @@ const Navbar = () => {
           </a>
 
           {categories.map((category) => (
-            <a
-              key={category}
-              href={`/category/${category}`}
-              className="shrink-0 rounded-lg border border-white/40 bg-white px-4 py-2 text-xs font-semibold capitalize text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:border-white hover:bg-yellow-50 hover:text-blue-600 sm:text-sm"
-            >
-              {category.replace(/-/g, " ")}
-            </a>
+
+          <Link
+            key={category}
+            to={`/category/${category}`}
+            className="shrink-0 rounded-lg border border-white/40 bg-white px-4 py-2 text-xs font-semibold capitalize text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:border-white hover:bg-yellow-50 hover:text-blue-600 sm:text-sm"
+          >
+            {category.replace(/-/g, " ")}
+          </Link>
           ))}
         </div>
       </div>

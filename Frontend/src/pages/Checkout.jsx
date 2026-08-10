@@ -1,22 +1,8 @@
-import React, { useEffect, useState } from "react";
-import API from "../api";
+import React from "react";
+import { useCheckoutItems } from "../hooks/queries/useCheckoutData";
 
 const Checkout = () => {
-  const [checkoutItems, setCheckoutItems] = useState([]);
-
-  useEffect(() => {
-    const loadCheckout = async () => {
-      try {
-        const res = await API.get("/products/checkout/all");
-        setCheckoutItems(Array.isArray(res.data) ? res.data : []);
-      } catch (error) {
-        console.error("Error loading checkout items:", error);
-        setCheckoutItems([]);
-      }
-    };
-
-    loadCheckout();
-  }, []);
+  const { data: checkoutItems = [] } = useCheckoutItems();
 
   const safeCheckoutItems = Array.isArray(checkoutItems) ? checkoutItems : [];
   const itemsTotal = safeCheckoutItems.reduce((acc, item) => acc + (item.price || 0) * 80, 0);

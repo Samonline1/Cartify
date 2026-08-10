@@ -1,14 +1,14 @@
-import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import API from "../api";
 import { useAuth } from "../AuthContext";
+import { useProfileTotal } from "../hooks/queries/useProfileTotal";
 
 const Profile = () => {
   const { user, setUser } = useAuth();
   const navigate = useNavigate();
 
-  const [expensesTotal, setExpensesTotal] = useState(0);
+  const { data: expensesTotal = 0 } = useProfileTotal(!!user);
 
   const handleLogout = async () => {
     try {
@@ -19,27 +19,10 @@ const Profile = () => {
 
       toast.success("Logged out");
       navigate("/login");
-    } catch (err) {
+    } catch {
       toast.error("Logout failed");
     }
   };
-
-  const fetchExpensesTotal = async () => {
-    try {
-      const res = await API.get("/products/checkout/total");
-      setExpensesTotal(res.data.total || 0);
-    } catch (err) {
-      console.error("Error fetching expenses total:", err);
-    }
-  };
-
-  useEffect(() => {
-    if (user) {
-      fetchExpensesTotal();
-    }
-  }, [user]);
-
-  
 
   if (!user) {
     return (

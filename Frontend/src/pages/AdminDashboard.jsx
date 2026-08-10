@@ -1,10 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { FiMenu, FiX } from "react-icons/fi";
-import API from "../api";
 import { useAuth } from "../AuthContext";
+import { useAdminDashboard } from "../hooks/queries/useAdminDashboard";
+import { useAdminUsers } from "../hooks/queries/useAdminUsers";
+import { useAdminUser } from "../hooks/queries/useAdminUser";
+import { useAdminLogout } from "../hooks/queries/useAdminLogout";
+import { useAdminProducts } from "../hooks/queries/useAdminProducts";
+import { useDeleteAdminUser } from "../hooks/queries/useDeleteAdminUser";
 
 function AdminDashboard() {
   const navigate = useNavigate();
@@ -26,65 +31,17 @@ function AdminDashboard() {
     }
   }, [navigate, user]);
 
-  const dashboardQuery = useQuery({
-    queryKey: ["admin", "dashboard"],
-    queryFn: async () => (await API.get("/admin/dashboard")).data,
-  });
+  const dashboardQuery = useAdminDashboard();
 
-  const usersQuery = useQuery({
-    queryKey: ["admin", "users"],
-    queryFn: async () => (await API.get("/admin/users")).data,
-  });
+  const usersQuery = useAdminUsers();
 
-  const selectedUserQuery = useQuery({
-    queryKey: ["admin", "user", selectedUserId],
-    queryFn: async () => (await API.get(`/admin/users/${selectedUserId}`)).data,
-    enabled: !!selectedUserId,
-  });
+  const selectedUserQuery = useAdminUser(selectedUserId);
 
-  const logoutMutation = useMutation({
-    mutationFn: async () => API.post("/admin/logout"),
-    onSuccess: () => {
-      setUser(null);
-      localStorage.removeItem("user");
-      queryClient.clear();
-      navigate("/admin");
-    },
-    onError: (err) => {
-      toast.error(err.response?.data?.msg || "Could not log out");
-    },
-  });
+  const logoutMutation = useAdminLogout();
 
-  const productSearchMutation = useMutation({
-    mutationFn: async (query) =>
-      (
-        await API.get("/admin/products", {
-          params: query ? { q: query } : {},
-        })
-      ).data,
-    onSuccess: (data) => {
-      queryClient.setQueryData(["admin", "products", productQuery.trim()], data);
-      setProductResults(data.products || []);
-      setSelectedProduct(null);
-    },
-    onError: (err) => {
-      toast.error(err.response?.data?.msg || "Failed to load products");
-    },
-  });
+  const productSearchMutation = useAdminProducts();
 
-  const deleteUserMutation = useMutation({
-    mutationFn: async (id) => (await API.delete(`/admin/users/${id}`)).data,
-    onSuccess: (data) => {
-      toast.success(data.msg || "User deleted");
-      setDeleteConfirmOpen(false);
-      setSelectedUserId(null);
-      queryClient.invalidateQueries({ queryKey: ["admin", "users"] });
-      queryClient.invalidateQueries({ queryKey: ["admin", "dashboard"] });
-    },
-    onError: (err) => {
-      toast.error(err.response?.data?.msg || "Could not delete user");
-    },
-  });
+  const deleteUserMutation = useDeleteAdminUser();
 
   useEffect(() => {
     if (dashboardQuery.isError || usersQuery.isError) {
@@ -97,7 +54,7 @@ function AdminDashboard() {
   }, [dashboardQuery.error, dashboardQuery.isError, navigate, usersQuery.error, usersQuery.isError]);
 
   const stats = dashboardQuery.data?.stats || {};
-  const users = usersQuery.data?.users || [];
+  const users = useMemo(() => usersQuery.data?.users ?? [], [usersQuery.data]);
   const products = productResults;
   const selectedUser = selectedUserQuery.data?.user || null;
   const selectedUserCartCount = (selectedUser?.cart || []).reduce((sum, item) => sum + (item.quantity || 0), 0);
@@ -116,7 +73,16 @@ function AdminDashboard() {
 
   const handleProductSearchSubmit = (e) => {
     e.preventDefault();
-    productSearchMutation.mutate(productQuery.trim());
+    productSearchMutation.mutate(productQuery.trim(), {
+      onSuccess: (data) => {
+        queryClient.setQueryData(["admin", "products", productQuery.trim()], data);
+        setProductResults(data.products || []);
+        setSelectedProduct(null);
+      },
+      onError: (err) => {
+        toast.error(err.response?.data?.msg || "Failed to load products");
+      },
+    });
   };
 
   const navigateView = (view) => {
@@ -163,11 +129,21 @@ function AdminDashboard() {
               ))}
               <button
                 className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-left text-sm text-gray-700 transition hover:bg-gray-50"
-                onClick={() => {
-                  closeSidebar();
-                  logoutMutation.mutate();
-                }}
-              >
+              onClick={() => {
+                closeSidebar();
+                logoutMutation.mutate(undefined, {
+                  onSuccess: () => {
+                    setUser(null);
+                    localStorage.removeItem("user");
+                    queryClient.clear();
+                    navigate("/admin");
+                  },
+                  onError: (err) => {
+                    toast.error(err.response?.data?.msg || "Could not log out");
+                  },
+                });
+              }}
+            >
                 Logout
               </button>
             </div>
@@ -235,7 +211,17 @@ function AdminDashboard() {
                     className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-left text-sm text-gray-700"
                     onClick={() => {
                       closeSidebar();
-                      logoutMutation.mutate();
+                      logoutMutation.mutate(undefined, {
+                        onSuccess: () => {
+                          setUser(null);
+                          localStorage.removeItem("user");
+                          queryClient.clear();
+                          navigate("/admin");
+                        },
+                        onError: (err) => {
+                          toast.error(err.response?.data?.msg || "Could not log out");
+                        },
+                      });
                     }}
                   >
                     Logout
@@ -475,7 +461,20 @@ function AdminDashboard() {
               </button>
               <button
                 className="rounded-md border border-red-300 bg-red-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
-                onClick={() => deleteUserMutation.mutate(selectedUser._id)}
+                onClick={() =>
+                  deleteUserMutation.mutate(selectedUser._id, {
+                    onSuccess: (data) => {
+                      toast.success(data.msg || "User deleted");
+                      setDeleteConfirmOpen(false);
+                      setSelectedUserId(null);
+                      queryClient.invalidateQueries({ queryKey: ["admin", "users"] });
+                      queryClient.invalidateQueries({ queryKey: ["admin", "dashboard"] });
+                    },
+                    onError: (err) => {
+                      toast.error(err.response?.data?.msg || "Could not delete user");
+                    },
+                  })
+                }
                 disabled={selectedUser.role === "admin" || deleteUserMutation.isPending}
               >
                 {deleteUserMutation.isPending ? "Deleting..." : "Delete"}

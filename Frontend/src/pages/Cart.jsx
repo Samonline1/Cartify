@@ -1,123 +1,68 @@
-import React, { useEffect, useState } from "react";
-import API from "../api";
+import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { useCartItems, useCartTotal } from "../hooks/queries/useCartData";
+import { useCheckoutItems, useCheckoutTotal } from "../hooks/queries/useCheckoutData";
+import { useCartCheckout } from "../hooks/mutations/useCartCheckout";
+import { useDeleteCartItem } from "../hooks/mutations/useDeleteCartItem";
 
 const Cart = () => {
-  const [cart, setCart] = useState([]);
-  const [total, setTotal] = useState(0);
-  const [checkoutData, setCheckoutData] = useState([]);
-  const [checkoutTotalValue, setCheckoutTotalValue] = useState(0);
   const [activeTab, setActiveTab] = useState("cart");
   const [showThankYou, setShowThankYou] = useState(false);
 
   const navigate = useNavigate();
-
-  const fetchCart = async () => {
-    try {
-      const res = await API.get("/products/cart/all");
-      setCart(res.data);
-    } catch (err) {
-      console.error("Error fetching cart:", err);
-    }
-  };
-
-  const fetchTotal = async () => {
-    try {
-      const res = await API.get("/products/cart/total");
-      setTotal(res.data.total);
-    } catch (err) {
-      console.error("Error fetching total:", err);
-    }
-  };
-
-  const checkoutItems = async () => {
-    try {
-      const res = await API.get("/products/checkout/all");
-
-      const purchases = res.data || [];
-
-      const enriched = await Promise.all(
-        purchases.map(async (item) => {
-          try {
-            const productRes = await API.get(`/products/${item.product}`);
-
-            return {
-              ...item,
-              title: productRes.data.title,
-              thumbnail: productRes.data.thumbnail,
-            };
-          } catch (error) {
-            return item;
-          }
-        })
-      );
-
-      setCheckoutData(enriched);
-    } catch (err) {
-      console.error("Error fetching checkout:", err);
-    }
-  };
-
-  const checkoutTotal = async () => {
-    try {
-      const res = await API.get("/products/checkout/total");
-      setCheckoutTotalValue(res.data.total);
-    } catch (err) {
-      console.error("Error fetching checkout total:", err);
-    }
-  };
+  const { data: cart = [], refetch: refetchCart } = useCartItems();
+  const { data: total = 0, refetch: refetchTotal } = useCartTotal();
+  const { data: checkoutData = [], refetch: refetchCheckoutItems } = useCheckoutItems();
+  const { data: checkoutTotalValue = 0, refetch: refetchCheckoutTotal } = useCheckoutTotal();
+  const checkoutMutation = useCartCheckout();
+  const deleteItemMutation = useDeleteCartItem();
 
   const checkout = async () => {
-    try {
-      const res = await API.post("/products/checkout");
+    checkoutMutation.mutate(undefined, {
+      onSuccess: async (data) => {
+        await refetchCart();
+        await refetchTotal();
+        await refetchCheckoutItems();
+        await refetchCheckoutTotal();
 
-      await fetchCart();
-      await fetchTotal();
-      await checkoutItems();
-      await checkoutTotal();
+        setActiveTab("purchased");
+        setShowThankYou(true);
 
-      setActiveTab("purchased");
-      setShowThankYou(true);
-
-      toast.success(res.data?.msg || "Checkout successful", {
-        
-        autoClose: 5000,
-      });
-    } catch (error) {
-      console.error("Error checkout:", error);
-      toast.error("Checkout failed");
-    }
+        toast.success(data?.msg || "Checkout successful", {
+          autoClose: 5000,
+        });
+      },
+      onError: (error) => {
+        console.error("Error checkout:", error);
+        toast.error("Checkout failed");
+      },
+    });
   };
 
   const deleteItem = async (id) => {
-    try {
-      const res = await API.delete(`/products/cart/${id}`);
+    deleteItemMutation.mutate(id, {
+      onSuccess: async (data) => {
+        toast.success(data?.msg || "Product removed!", {
+          autoClose: 5000,
+        });
 
-      toast.success(res.data?.msg || "Product removed!", {
-        
-        autoClose: 5000,
-      });
-
-      fetchCart();
-      fetchTotal();
-    } catch (err) {
-      console.error("Error removing item:", err);
-      toast.error("Could not remove product");
-    }
+        await refetchCart();
+        await refetchTotal();
+      },
+      onError: (err) => {
+        console.error("Error removing item:", err);
+        toast.error("Could not remove product");
+      },
+    });
   };
-
-  useEffect(() => {
-    fetchCart();
-    fetchTotal();
-    checkoutItems();
-    checkoutTotal();
-  }, []);
 
   const cartCount = cart.reduce(
     (sum, item) => sum + (item.quantity || 0),
     0
   );
+
+  console.log(checkoutData)
 
   return (
     <main className="min-h-screen bg-[#f8fbff] px-4 py-7 text-slate-900 sm:px-6 lg:px-10 lg:py-10">
@@ -537,7 +482,7 @@ const Cart = () => {
                               <div className="min-w-0">
 
                                 <h3 className="line-clamp-2 font-bold text-slate-800">
-                                  {item.title ||
+                                  {item.name ||
                                     `Product #${item.product}`}
                                 </h3>
 

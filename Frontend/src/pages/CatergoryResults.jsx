@@ -6,6 +6,7 @@ import NoProducts from "../components/NoProducts";
 import Pagination from "../components/Pagination";
 import ProductQuickView from "../components/ProductQuickView";
 import {Eye } from "lucide-react";
+import { useProductsByCategory } from "../hooks/queries/useProductsByCategory";
 
 // category results
 const CategoryResults = () => {
@@ -16,8 +17,7 @@ const CategoryResults = () => {
   const { name } = useParams();
 
   // product data
-  const [products, setProducts] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const { data: products = [], isLoading } = useProductsByCategory(name);
 
   // active filters
   const [filters, setFilters] = useState([]);
@@ -25,46 +25,8 @@ const CategoryResults = () => {
   const [filData, setFilData] = useState([]); // always keep an array to avoid .map errors
 
   useEffect(() => {
-    // load products
-    const searchResults = async () => {
-      if (!name) return;
-
-      setIsLoading(true);
-      try {
-        toast.loading("Loading products...", { id: "search" });
-
-        const res = await API.get(`/products/category/${name}`);
-
-        const products = Array.isArray(res.data)
-          ? res.data
-          : (res.data?.products ?? []);
-
-        if (products.length === 0) {
-          toast.error("No products found", { id: "search" });
-        } else {
-          toast.success(`${products.length} products found`, { id: "search" });
-        }
-
-        // backend returns array; defensively normalise in case shape changes
-        const normalised = Array.isArray(res.data)
-          ? res.data
-          : Array.isArray(res.data?.products)
-            ? res.data.products
-            : [];
-
-        setProducts(normalised);
-        setFilData(normalised); // seed filtered data immediately
-      } catch (error) {
-        toast.error("No products found...", error);
-        setProducts([]);
-        setFilData([]); // keep array to prevent f.map errors in UI
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    searchResults();
-  }, [name]);
+    setFilData(products);
+  }, [products]);
 
   const navigate = useNavigate();
 
@@ -132,7 +94,7 @@ const CategoryResults = () => {
     try {
       const res = await API.post(`/products/cart/${id}`);
 
-      const { msg, cart } = res.data;
+      const { msg } = res.data;
 
       toast.success(msg || "Added to cart!", {
         autoClose: 5000,

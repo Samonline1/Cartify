@@ -1,58 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useMemo } from "react";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
-import API from "../api"
+import API from "../api";
 import NoProducts from "../components/NoProducts";
 import Pagination from "../components/Pagination";
 import ProductQuickView from "../components/ProductQuickView"
 import { Eye } from "lucide-react";
+import { useProductSearch } from "../hooks/queries/useProductSearch";
 
 
 // search page
 const SearchResults = () => {
   const { name } = useParams();
-  const [products, setProducts] = useState([]); // keep an array to avoid map errors
-  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    const searchResults = async () => {
-      setIsLoading(true);
-      try {
-        toast.loading("Loading products...", { id: "search" });
-
-        const res = await API.get(`/products/search?q=${name}`);
-
-        const products = Array.isArray(res.data)
-          ? res.data
-          : res.data?.products ?? [];
-
-        if (products.length === 0) {
-          toast.error("No products found", { id: "search" });
-        } else {
-          toast.success(`${products.length} products found`, { id: "search" });
-        }
-
-        // normalise: backend may respond with {products: []} or []
-        const normalised = Array.isArray(res.data)
-          ? res.data
-          : res.data?.products ?? [];
-        setProducts(normalised);
-
-      } catch (error) {
-        toast.error("No products found...", error);
-        setProducts([]); // stay array to keep render safe
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    if (name) searchResults();
-  }, [name]);
+  const { data: products = [], isLoading } = useProductSearch(name);
 
   // pagination calc
 
@@ -64,12 +29,12 @@ const SearchResults = () => {
   const endIndex = startIndex + pageSize;
 
 
-  const matching = products?.filter((p) =>
+  const matching = useMemo(() => products.filter((p) =>
     p.title
       .toLowerCase()
       .split(" ")
       .some((word) => word.startsWith(name.toLowerCase())),
-  );
+  ), [name, products]);
 
   const pages = Math.ceil(matching.length / pageSize);
 
@@ -85,7 +50,7 @@ const SearchResults = () => {
       const res = await API.post(
         `/products/cart/${id}`);
 
-      const { msg, cart } = res.data;
+      const { msg } = res.data;
 
       toast.success(msg || "Added to cart!", {
         autoClose: 5000

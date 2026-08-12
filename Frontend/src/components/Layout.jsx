@@ -2,8 +2,9 @@ import React from "react";
 import { Outlet } from "react-router-dom";
 import Navbar from "./Navbar";
 import NavbarMobile from "./NavbarMobile";
-import Footer from "./Footer"; 
+import Footer from "./Footer";
 import ScrollTop from "./ScrollTop";
+import AiButton from "./AiButton";
 
 // app shell
 const Layout = () => {
@@ -30,6 +31,7 @@ const Layout = () => {
       {/* Footer */}
       <Footer />
 
+      <AiButton />
     </div>
   );
 };

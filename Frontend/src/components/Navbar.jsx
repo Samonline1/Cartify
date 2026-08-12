@@ -37,28 +37,28 @@ const Navbar = () => {
   }, [input]);
 
   // category list
-  const categories = [
-    "smartphones",
-    "laptops",
-    "fragrances",
-    "skin-care",
-    "groceries",
-    "home-decoration",
-    "furniture",
-    "tops",
-    "womens-dresses",
-    "womens-shoes",
-    "mens-shirts",
-    "mens-shoes",
-    "mens-watches",
-    "womens-watches",
-    "womens-bags",
-    "womens-jewellery",
-    "sunglasses",
-    "automotive",
-    "motorcycle",
-    "lighting",
-  ];
+  // const categories = [
+  //   "smartphones",
+  //   "laptops",
+  //   "fragrances",
+  //   "skin-care",
+  //   "groceries",
+  //   "home-decoration",
+  //   "furniture",
+  //   "tops",
+  //   "womens-dresses",
+  //   "womens-shoes",
+  //   "mens-shirts",
+  //   "mens-shoes",
+  //   "mens-watches",
+  //   "womens-watches",
+  //   "womens-bags",
+  //   "womens-jewellery",
+  //   "sunglasses",
+  //   "automotive",
+  //   "motorcycle",
+  //   "lighting",
+  // ];
 
   // trigger search
   const searchProducts = (search) => {
@@ -85,7 +85,7 @@ const Navbar = () => {
 
   // render nav
   return (
-    <nav className="sticky top-0 z-30 bg-gradient-to-b from-blue-500 to-blue-400 shadow-md">
+    <nav className="sticky top-0 z-30 bg-gradient-to-b from-blue-500 to-blue-400">
       <div className="mx-auto w-full px-3 py-3 sm:px-5 lg:px-8">
         {/* MAIN NAV */}
 
@@ -297,8 +297,7 @@ const Navbar = () => {
 
         {/* CATEGORY NAV */}
 
-        <div className="mt-3 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
-          {/* All products */}
+        {/* <div className="mt-3 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
 
           <a
             href="/"
@@ -317,7 +316,7 @@ const Navbar = () => {
             {category.replace(/-/g, " ")}
           </Link>
           ))}
-        </div>
+        </div> */}
       </div>
     </nav>
   );

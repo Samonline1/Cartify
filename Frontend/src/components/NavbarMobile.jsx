@@ -3,12 +3,7 @@ import toast from "react-hot-toast";
 import { BsSearch, BsSmartwatch } from "react-icons/bs";
 import { LuShoppingCart } from "react-icons/lu";
 import { HiOutlineDevicePhoneMobile } from "react-icons/hi2";
-import {
-  MdLaptopMac,
-  MdTabletMac,
-  MdDirectionsCar,
-  MdSportsSoccer,
-} from "react-icons/md";
+
 import { PiArmchairFill } from "react-icons/pi";
 import { RiShoppingBag3Line } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
@@ -43,51 +38,6 @@ const NavbarMobile = () => {
     return () => clearTimeout(timer);
   }, [input]);
 
-  // quick links
-  const shortcuts = [
-    {
-      label: "Smartphones",
-      bg: "bg-blue-500",
-      Icon: HiOutlineDevicePhoneMobile,
-      link: "/category/smartphones",
-    },
-    {
-      label: "Laptops",
-      bg: "bg-indigo-500",
-      Icon: MdLaptopMac,
-      link: "/category/laptops",
-    },
-    {
-      label: "Furniture",
-      bg: "bg-amber-500",
-      Icon: PiArmchairFill,
-      link: "/category/furniture",
-    },
-    {
-      label: "Groceries",
-      bg: "bg-green-500",
-      Icon: RiShoppingBag3Line,
-      link: "/category/groceries",
-    },
-    {
-      label: "Sports",
-      bg: "bg-lime-500",
-      Icon: MdSportsSoccer,
-      link: "/category/sports-accessories",
-    },
-    {
-      label: "Tablets",
-      bg: "bg-red-500",
-      Icon: MdTabletMac,
-      link: "/category/tablets",
-    },
-    {
-      label: "Vehicles",
-      bg: "bg-yellow-500",
-      Icon: MdDirectionsCar,
-      link: "/category/vehicle",
-    },
-  ];
 
   // do search
   const handleSearch = () => {
@@ -437,30 +387,7 @@ const NavbarMobile = () => {
           )}
         </div>
 
-        {/* SHORTCUTS */}
-
-        <div 
-        className="mt-3 -mx-1 overflow-x-auto scrollbar-hide">
-          <div className="flex gap-2 px-1 pb-1">
-            {shortcuts.map((s) => (
-              <button
-                key={s.label}
-                onClick={() => navigate(s.link)}
-                className="group flex h-[72px] min-w-[88px] flex-col items-center justify-center gap-1.5 rounded-2xl border border-white/60 bg-white px-2 shadow-sm transition active:scale-95"
-              >
-                <span
-                  className={`flex h-8 w-8 items-center justify-center rounded-xl ${s.bg} text-sm text-white shadow-sm transition group-hover:scale-105`}
-                >
-                  <s.Icon />
-                </span>
-
-                <span className="w-full truncate text-center text-[10px] font-bold capitalize text-slate-700">
-                  {s.label}
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
+      
       </div>
     </div>
   );

@@ -12,7 +12,7 @@ router.post("/cart/:id", isLoggedIn, productsController.addToCart);
 router.delete("/cart/:id", isLoggedIn, productsController.deleteFromCart);
 router.get("/search", productsController.search);
 router.get("/category/:category", productsController.category);
+router.get("/asksearch", productsController.askSearch);
 router.get("/:id", productsController.product);
-
 
 module.exports = router;

@@ -13,6 +13,24 @@ const {
   getCheckoutTotal,
 } = require("../services/cartService");
 
+const { parseQuery } = require("../search/queryParser")
+
+
+async function askSearch(req, res) {
+  try {
+    const query = req.query.q || "";
+
+    const filters = await parseQuery(query);
+
+    res.json({
+      query,
+      filters,
+    });
+  } catch (err) {
+    res.status(400).json({ msg: "Error searching", error: err.message });
+  }
+}
+
 async function search(req, res) {
   try {
     const { q } = req.query;
@@ -124,4 +142,5 @@ module.exports = {
   cartTotal,
   checkoutAll,
   checkoutTotal,
+  askSearch
 };

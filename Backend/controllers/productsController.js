@@ -14,20 +14,30 @@ const {
 } = require("../services/cartService");
 
 const { parseQuery } = require("../search/queryParser")
+const { searchProductsService } = require("../search/productSearchService")
+
 
 
 async function askSearch(req, res) {
   try {
     const query = req.query.q || "";
 
-    const filters = await parseQuery(query);
+    const parsedQuery = await parseQuery(query);
+
+    const products = await searchProductsService(parsedQuery);
+
+
+    // console.log("filter", filters)
+        // console.log("products", products)
 
     res.json({
       query,
-      filters,
+      filters: parsedQuery.category,
+      total: products.length,
+      products,
     });
   } catch (err) {
-    res.status(400).json({ msg: "Error searching", error: err.message });
+    res.status(500).json({ msg: "Error searching", error: err.message });
   }
 }
 

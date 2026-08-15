@@ -46,22 +46,27 @@ const searchProductsService = async (parsedQuery) => {
 
 
     // Features
-    // if (filters.features.length > 0) {
-    //     products = products.filter((product) => {
-    //         const searchableText = [
-    //             product.title,
-    //             product.description,
-    //             product.brand,
-    //             ...(product.tags || []),
-    //         ]
-    //             .join(" ")
-    //             .toLowerCase();
+    if (filters.features?.length > 0) {
+        const featureFilteredProducts = products.filter((product) => {
+            const searchableText = [
+                product.title,
+                product.description,
+                product.brand,
+                ...(product.tags || []),
+            ]
+                .join(" ")
+                .toLowerCase();
 
-    //         return filters.features.every((feature) =>
-    //             searchableText.includes(feature.toLowerCase())
-    //         );
-    //     });
-    // }
+            return filters.features.some((feature) =>
+                searchableText.includes(feature.toLowerCase())
+            );
+        });
+
+        // Only apply feature filtering if it found something
+        if (featureFilteredProducts.length > 0) {
+            products = featureFilteredProducts;
+        }
+    }
 
 
     // Sorting
@@ -83,5 +88,5 @@ const searchProductsService = async (parsedQuery) => {
 
 
 module.exports = {
-  searchProductsService,
+    searchProductsService,
 };

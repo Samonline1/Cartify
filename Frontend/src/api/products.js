@@ -10,6 +10,13 @@ export async function fetchProductByName(name) {
     return response.data;
 }
 
+export async function searchWithAssistant(query) {
+    const response = await API.get(`/products/asksearch`, {
+        params: { q: query}
+    });
+    return response.data;
+}
+
 export async function fetchHomeProducts() {
     const response = await fetch("https://dummyjson.com/products?limit=100");
 

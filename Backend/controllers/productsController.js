@@ -32,7 +32,7 @@ async function askSearch(req, res) {
 
     res.json({
       query,
-      filters: parsedQuery.category,
+      filters: parsedQuery,
       total: products.length,
       products,
     });

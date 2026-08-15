@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../AuthContext";
 import { CgProfile } from "react-icons/cg";
 import { useProductByName } from "../hooks/queries/useProductName";
+import { useDebounce } from "../hooks/useDebounce";
 
 // mobile nav
 const NavbarMobile = () => {
@@ -18,9 +19,15 @@ const NavbarMobile = () => {
   const { user, setUser } = useAuth();
   // search text
   const [input, setInput] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
 
-  const { data: product, isLoading, error } = useProductByName(debouncedSearch);
+  const debouncedSearch = useDebounce(input, 300);
+
+  const {
+    data: product,
+    isLoading,
+    error,
+  } = useProductByName(debouncedSearch);
+
 
   const filter = product?.filter((p) =>
     p.title
@@ -29,14 +36,6 @@ const NavbarMobile = () => {
       .some((word) => word.startsWith(debouncedSearch.toLowerCase())),
   );
 
-  // debounce trigger
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearch(input);
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [input]);
 
 
   // do search
@@ -47,7 +46,19 @@ const NavbarMobile = () => {
     }
     navigate(`/search/${input.trim()}`);
     setInput("");
-    setDebouncedSearch("");
+  };
+
+
+   // product  details
+  const openProductInfo = (id) => {
+    const name = input;
+    if (!id) {
+      toast.error("Type something to search");
+      return;
+    }
+    navigate(`/search/${name}/${id}`);
+
+    setInput("");
   };
 
   // render mobile nav
@@ -56,8 +67,8 @@ const NavbarMobile = () => {
       <div className="px-4 py-3">
         {/* TOP BAR */}
 
-        <div 
-        className="flex items-center justify-between">
+        <div
+          className="flex items-center justify-between">
           {/* Logo */}
 
           <button
@@ -110,8 +121,8 @@ const NavbarMobile = () => {
         </div>
 
         {/* SEARCH */}
-        <div 
-        className="relative flex h-11 min-w-0 flex-1 items-center rounded-2xl bg-white px-2 shadow-lg ring-1 ring-black/5 transition-all duration-200 focus-within:ring-2 focus-within:ring-yellow-300 sm:h-12">
+        <div
+          className="relative flex h-11 min-w-0 flex-1 items-center rounded-2xl bg-white px-2 shadow-lg ring-1 ring-black/5 transition-all duration-200 focus-within:ring-2 focus-within:ring-yellow-300 sm:h-12">
           {/* Search icon */}
           <BsSearch className="ml-3 shrink-0 text-slate-400" />
 
@@ -129,7 +140,7 @@ const NavbarMobile = () => {
 
               if (e.key === "Escape") {
                 setInput("");
-                setDebouncedSearch("");
+                setInput("");
               }
             }}
           />
@@ -249,7 +260,7 @@ const NavbarMobile = () => {
 
                   <button
                     type="button"
-                    onClick={() => setDebouncedSearch(input)}
+                    onClick={() => setInput(input)}
                     className="mt-4 rounded-lg bg-blue-50 px-4 py-2 text-xs font-semibold text-blue-600 transition hover:bg-blue-100"
                   >
                     Try again
@@ -387,7 +398,7 @@ const NavbarMobile = () => {
           )}
         </div>
 
-      
+
       </div>
     </div>
   );

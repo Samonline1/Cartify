@@ -4,7 +4,7 @@ import Navbar from "./Navbar";
 import NavbarMobile from "./NavbarMobile";
 import Footer from "./Footer";
 import ScrollTop from "./ScrollTop";
-import AiButton from "./AiButton";
+import AiButton from "./ai/AiButton";
 
 // app shell
 const Layout = () => {

@@ -7,17 +7,24 @@ import {Link} from "react-router-dom";
 import { useAuth } from "../AuthContext";
 import { CgProfile } from "react-icons/cg";
 import { useProductByName } from "../hooks/queries/useProductName";
+import { useDebounce } from "../hooks/useDebounce";
 
 // navbar
 const Navbar = () => {
   // search text
-  const [input, setInput] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
+const [input, setInput] = useState("");
+
+const debouncedSearch = useDebounce(input, 300);
+
+const {
+  data: product,
+  isLoading,
+  error,
+} = useProductByName(debouncedSearch);
 
   const navigate = useNavigate();
   const { user, setUser } = useAuth();
 
-  const { data: product, isLoading, error } = useProductByName(debouncedSearch);
 
   const filter = product?.filter((p) =>
     p.title
@@ -26,15 +33,6 @@ const Navbar = () => {
       .some((word) => word.startsWith(debouncedSearch.toLowerCase())),
   );
 
-
-  // debounce trigger
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearch(input);
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [input]);
 
   // category list
   // const categories = [

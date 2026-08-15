@@ -48,9 +48,15 @@ export function parseQuery(query) {
     }
 
     // Rating
-    const rating = text.match(
-        /(?:rating|rated)\s*(?:above|over|of|at least)?\s*(\d(?:\.\d)?)/i
-    );
+    let rating = null;
+
+    rating =
+        text.match(
+            /(?:rating|rated|stars?)\s*(?:of|above|over|at\s*least|minimum)?\s*(\d(?:\.\d)?)/i
+        ) ||
+        text.match(
+            /(?:above|over|at\s*least|minimum)\s*(\d(?:\.\d)?)\s*(?:rating|rated|stars?)/i
+        );
 
     if (rating) {
         result.minRating = Number(rating[1]);

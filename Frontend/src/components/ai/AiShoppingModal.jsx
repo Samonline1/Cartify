@@ -213,220 +213,157 @@ const AiShoppingModal = ({ open, onClose }) => {
         onClose();
     };
 
-    return (
+   return (
+    <div
+        className="
+            fixed inset-0 z-[100]
+            h-dvh w-full
+            overflow-hidden
+            bg-gradient-to-t from-blue-500 to-blue-400
+        "
+    >
         <div
+            onClick={(e) => e.stopPropagation()}
             className="
-                fixed inset-0 z-[100]
-                flex items-center justify-center
-                bg-slate-950/60
-                p-3
-                backdrop-blur-md
-                sm:p-6
+                flex h-full w-full flex-col
+                overflow-hidden
+                bg-gradient-to-t from-blue-100 to-blue-500
             "
         >
 
-            {/* MODAL */}
+             {/* HEADER  */}
 
-            <div
+            <header
                 className="
-                    flex
-                    h-full
-                    w-full
-                    max-w-6xl
-                    flex-col
-                    overflow-hidden
-                    rounded-3xl
-                    border
-                    border-white/20
-                    bg-slate-50
-                    shadow-2xl
-
-                    animate-[fadeIn_.25s_ease-out]
-
-                    sm:h-[92vh]
+                    flex shrink-0 items-center justify-between
+                    px-4 py-3
+                    text-white
+                    
+                    sm:px-6 sm:py-4
                 "
-                onClick={(e) => e.stopPropagation()}
             >
 
+                {/* Brand */}
 
-                {/* HEADER */}
+                <div className="flex min-w-0 items-center gap-3">
 
-                <header
-                    className="
-                        flex
-                        shrink-0
-                        items-center
-                        justify-between
-                        border-b
-                        border-slate-200
-                        bg-white/95
-                        px-5
-                        py-4
-                        backdrop-blur
-                    "
-                >
+                    <div
+                        className="
+                            flex h-10 w-10 shrink-0
+                            items-center justify-center
+                            rounded-xl
+                            bg-white
+                            text-blue-600
+                            shadow-sm
+                        "
+                    >
+                        <Sparkles size={20} />
+                    </div>
 
-                    <div className="flex items-center gap-3">
+                    <div className="min-w-0">
 
-                        <div
-                            className="
-                                flex
-                                h-10
-                                w-10
-                                items-center
-                                justify-center
-                                rounded-xl
-                                bg-blue-600
-                                text-white
-                                shadow-sm
-                            "
-                        >
-                            <Sparkles size={20} />
-                        </div>
+                        <h2 className="truncate text-base font-bold sm:text-lg">
+                            Cartify Shopping Assistant
+                        </h2>
 
-                        <div>
-
-                            <h2 className="font-bold text-slate-900">
-                                AI Shopping
-                            </h2>
-
-                            <p className="text-xs text-slate-500">
-                                Find products using natural language
-                            </p>
-
-                        </div>
+                        <p className="hidden text-xs text-blue-100 sm:block">
+                            Search, compare and explore products
+                        </p>
 
                     </div>
 
-                    <button
-                        type="button"
-                        onClick={handleClose}
-                        className="
-                            flex
-                            h-9
-                            w-9
-                            items-center
-                            justify-center
-                            rounded-full
-                            bg-slate-100
-                            text-slate-500
-                            transition
-                            hover:bg-red-50
-                            hover:text-red-600
-                        "
-                        aria-label="Close AI Shopping"
-                    >
-                        <X size={18} />
-                    </button>
-
-                </header>
+                </div>
 
 
-                    {/* RESULTS */}
+                {/* Close */}
 
-                <main
+                <button
+                    type="button"
+                    onClick={handleClose}
                     className="
-                        min-h-0
-                        flex-1
-                        overflow-y-auto
-                        p-4
-                        sm:p-6
+                        flex h-9 w-9 shrink-0
+                        items-center justify-center
+                        rounded-full
+                        bg-white/15
+                        text-white
+                        transition
+                        hover:bg-white/25
+                        active:scale-95
                     "
+                    aria-label="Close AI Shopping"
                 >
+                    <X size={19} />
+                </button>
 
-                    {/* INITIAL STATE */}
+            </header>
+
+
+             {/* RESULTS  */}
+
+            <main
+                className="
+                    min-h-0
+                    flex-1
+                    overflow-y-auto
+                    scrollbar-hide
+                    px-3 py-4
+                    sm:px-6 sm:py-6
+                    lg:px-10
+                "
+            >
+
+                <div className="mx-auto w-full max-w-7xl">
+
+                    {/* Your existing initial states */}
 
                     {searchType === "ask" &&
                         !submittedQuery && (
-                            <div className="flex h-full items-center justify-center">
+                            <div className="flex min-h-[60vh] items-center justify-center">
 
-                                <div className="max-w-lg text-center">
+                                <div className="max-w-2xl px-4 text-center">
 
-                                    <div
-                                        className="
-                                            mx-auto
-                                            flex
-                                            h-16
-                                            w-16
-                                            items-center
-                                            justify-center
-                                            rounded-2xl
-                                            bg-blue-100
-                                            text-blue-600
-                                        "
-                                    >
-                                        <Sparkles size={30} />
-                                    </div>
 
                                     <h1
                                         className="
                                             mt-5
-                                            text-2xl
-                                            font-black
-                                            text-slate-900
+                                            text-2xl font-black
+                                            tracking-tight
+                                            text-white
+                                            sm:text-3xl
                                         "
                                     >
                                         What are you looking for?
                                     </h1>
 
-                                    <p
-                                        className="
-                                            mt-2
-                                            text-sm
-                                            leading-6
-                                            text-slate-500
-                                        "
-                                    >
-                                        Try something like:
+                                    <p className="mt-3 text-sm leading-6 text-slate-500">
+                                        Search naturally and let Cartify find
+                                        the products for you.
                                     </p>
 
-                                    <p
-                                        className="
-                                            mt-1
-                                            font-medium
-                                            text-slate-700
-                                        "
-                                    >
-                                        "gaming phone under ₹20,000"
-                                    </p>
 
                                 </div>
 
                             </div>
                         )}
 
-                    {/* RATING INITIAL */}
+
+                    {/* Rating initial */}
 
                     {searchType === "rating" &&
                         selectedProducts.length === 0 &&
                         !productInput && (
-                            <div className="flex h-full items-center justify-center">
+                            <div className="flex min-h-[60vh] items-center justify-center">
 
-                                <div className="text-center">
+                                <div className="px-4 text-center">
 
-                                    <div
-                                        className="
-                                            mx-auto
-                                            flex
-                                            h-16
-                                            w-16
-                                            items-center
-                                            justify-center
-                                            rounded-2xl
-                                            bg-yellow-100
-                                            text-yellow-600
-                                        "
-                                    >
-                                        ⭐
-                                    </div>
 
-                                    <h1 className="mt-5 text-2xl font-black text-slate-900">
-                                        Check a product
+                                    <h1 className="mt-5 text-2xl font-black text-white">
+                                        Check product ratings
                                     </h1>
 
                                     <p className="mt-2 text-sm text-slate-500">
-                                        Search for a product and select it
-                                        to see its rating.
+                                        Search for a product and select it to
+                                        see its reviews and rating.
                                     </p>
 
                                 </div>
@@ -434,37 +371,23 @@ const AiShoppingModal = ({ open, onClose }) => {
                             </div>
                         )}
 
-                    {/* COMPARE INITIAL */}
+
+                    {/* Compare initial */}
 
                     {searchType === "compare" &&
                         selectedProducts.length === 0 &&
                         !productInput && (
-                            <div className="flex h-full items-center justify-center">
+                            <div className="flex min-h-[60vh] items-center justify-center">
 
-                                <div className="text-center">
+                                <div className="px-4 text-center">
 
-                                    <div
-                                        className="
-                                            mx-auto
-                                            flex
-                                            h-16
-                                            w-16
-                                            items-center
-                                            justify-center
-                                            rounded-2xl
-                                            bg-purple-100
-                                            text-purple-600
-                                        "
-                                    >
-                                        ⚖️
-                                    </div>
-
-                                    <h1 className="mt-5 text-2xl font-black text-slate-900">
+                                    <h1 className="mt-5 text-2xl font-black text-white">
                                         Compare products
                                     </h1>
 
                                     <p className="mt-2 text-sm text-slate-500">
-                                        Select up to 3 products to compare.
+                                        Select up to 3 products to compare
+                                        their specifications.
                                     </p>
 
                                 </div>
@@ -472,31 +395,29 @@ const AiShoppingModal = ({ open, onClose }) => {
                             </div>
                         )}
 
-                    {/* ASK LOADING */}
+
+                    {/* Loading */}
 
                     {searchType === "ask" &&
                         askQuery.isLoading && (
                             <AiLoading />
                         )}
 
-                    {/* PRODUCT SEARCH LOADING */}
-
                     {searchType !== "ask" &&
                         isProductSearching && (
                             <AiLoading />
                         )}
 
-                    {/* ASK ERROR */}
+
+                    {/* Errors */}
 
                     {searchType === "ask" &&
                         askQuery.isError && (
                             <div
                                 className="
-                                    mx-auto
-                                    max-w-xl
+                                    mx-auto mt-8 max-w-xl
                                     rounded-2xl
-                                    border
-                                    border-red-200
+                                    border border-red-200
                                     bg-red-50
                                     p-5
                                     text-center
@@ -512,17 +433,14 @@ const AiShoppingModal = ({ open, onClose }) => {
                             </div>
                         )}
 
-                    {/* PRODUCT SEARCH ERROR */}
 
                     {searchType !== "ask" &&
                         productQuery.isError && (
                             <div
                                 className="
-                                    mx-auto
-                                    max-w-xl
+                                    mx-auto mt-8 max-w-xl
                                     rounded-2xl
-                                    border
-                                    border-red-200
+                                    border border-red-200
                                     bg-red-50
                                     p-5
                                     text-center
@@ -538,8 +456,8 @@ const AiShoppingModal = ({ open, onClose }) => {
                             </div>
                         )}
 
-    
-                        {/* ASK RESULTS */}
+
+                    {/* Ask results */}
 
                     {searchType === "ask" &&
                         askQuery.isSuccess && (
@@ -548,8 +466,8 @@ const AiShoppingModal = ({ open, onClose }) => {
                             />
                         )}
 
-    
-                        {/* RATING RESULTS */}
+
+                    {/* Rating results */}
 
                     {searchType === "rating" &&
                         selectedProducts.length === 1 && (
@@ -558,8 +476,8 @@ const AiShoppingModal = ({ open, onClose }) => {
                             />
                         )}
 
-    
-                        {/* COMPARE RESULTS */}
+
+                    {/* Compare results */}
 
                     {searchType === "compare" &&
                         selectedProducts.length >= 2 && (
@@ -568,172 +486,210 @@ const AiShoppingModal = ({ open, onClose }) => {
                             />
                         )}
 
+                </div>
+
+            </main>
 
 
-                </main>
+             {/* INPUT AREA  */}
 
+            <footer
+                className="
+                    relative z-50 shrink-0
+                    
+                    px-3 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]
+                    sm:px-5 sm:pt-4
+                "
+            >
 
-                {/* INPUT FOOTER */}
+                <div className="relative mx-auto w-full max-w-4xl">
 
-                <footer
-                    className="
-                        relative
-                        z-50
-                        shrink-0
-                        border-t
-                        border-slate-200
-                        bg-white/95
-                        p-3
-                        backdrop-blur
-                        sm:p-5
-                    "
-                >
+                    {/* PRODUCT SUGGESTIONS */}
 
-                    <div className="relative mx-auto w-full max-w-4xl">
+                    {searchType !== "ask" &&
+                        productQuery.isSuccess &&
+                        productQuery.data?.length > 0 &&
+                        productInput && (
 
-        
-                            {/* PRODUCT SUGGESTIONS */}
+                            <div
+                                className="
+                                    absolute bottom-full left-0 right-0
+                                    z-[9999]
+                                    mb-2
+                                "
+                            >
 
-                        {searchType !== "ask" &&
-                            productQuery.isSuccess &&
-                            productQuery.data?.length > 0 &&
-                            productInput && (
-                                <div className="absolute bottom-full left-0 right-0 z-[9999] mb-2">
+                                <div
+                                    className="
+                                        max-h-72
+                                        overflow-y-auto
+                                        scrollbar-hide
+                                        rounded-2xl
+                                        border border-slate-200
+                                        bg-white
+                                        p-3
+                                        shadow-2xl
+                                    "
+                                >
 
-                                    <div className="max-h-72 overflow-y-auto rounded-2xl border border-slate-200 bg-white p-3 shadow-2xl">
+                                    <p className="mb-3 px-1 text-xs font-bold uppercase tracking-wide text-slate-400">
+                                        Select a product
+                                    </p>
 
-                                        <p className="mb-3 text-sm font-semibold text-slate-500">
-                                            Select a product
-                                        </p>
+                                    <div className="space-y-2">
 
-                                        <div className="space-y-2">
+                                        {productQuery.data
+                                            .slice(0, 6)
+                                            .map((product) => {
 
-                                            {productQuery.data
-                                                .slice(0, 6)
-                                                .map((product) => {
+                                                const selected =
+                                                    selectedProducts.some(
+                                                        (item) =>
+                                                            item.id === product.id
+                                                    );
 
-                                                    const selected =
-                                                        selectedProducts.some(
-                                                            (item) =>
-                                                                item.id ===
-                                                                product.id
-                                                        );
-
-                                                    return (
-                                                        <button
-                                                            key={product.id}
-                                                            type="button"
-                                                            disabled={selected}
-                                                            onClick={() =>
-                                                                handleProductSelect(
-                                                                    product
-                                                                )
-                                                            }
-                                                            className={`flex w-full items-center gap-3 rounded-2xl border bg-white p-3 text-left transition ${
+                                                return (
+                                                    <button
+                                                        key={product.id}
+                                                        type="button"
+                                                        disabled={selected}
+                                                        onClick={() =>
+                                                            handleProductSelect(
+                                                                product
+                                                            )
+                                                        }
+                                                        className={`
+                                                            flex w-full
+                                                            items-center gap-3
+                                                            rounded-xl
+                                                            border
+                                                            p-3
+                                                            text-left
+                                                            transition
+                                                            ${
                                                                 selected
                                                                     ? "cursor-not-allowed border-blue-200 bg-blue-50 opacity-60"
-                                                                    : "border-slate-200 hover:border-blue-300 hover:bg-blue-50"
-                                                            }`}
-                                                        >
+                                                                    : "border-slate-200 bg-white hover:border-blue-300 hover:bg-blue-50"
+                                                            }
+                                                        `}
+                                                    >
 
-                                                            <img
-                                                                src={product.thumbnail}
-                                                                alt={product.title}
-                                                                className="h-14 w-14 shrink-0 rounded-xl border border-slate-200 object-cover"
-                                                            />
+                                                        <img
+                                                            src={product.thumbnail}
+                                                            alt={product.title}
+                                                            className="
+                                                                h-12 w-12
+                                                                shrink-0
+                                                                rounded-xl
+                                                                border
+                                                                border-slate-200
+                                                                object-cover
+                                                            "
+                                                        />
 
-                                                            <div className="min-w-0 flex-1">
+                                                        <div className="min-w-0 flex-1">
 
-                                                                <p className="truncate font-semibold text-slate-800">
-                                                                    {product.title}
-                                                                </p>
+                                                            <p className="truncate text-sm font-semibold text-slate-800">
+                                                                {product.title}
+                                                            </p>
 
-                                                                <p className="mt-1 text-xs text-slate-500">
-                                                                    {product.brand || product.category}
-                                                                </p>
+                                                            <p className="mt-0.5 truncate text-xs text-slate-500">
+                                                                {product.brand ||
+                                                                    product.category}
+                                                            </p>
 
-                                                            </div>
+                                                        </div>
 
-                                                            <div className="text-right">
+                                                        <div className="shrink-0 text-right">
 
-                                                                <p className="font-bold text-blue-600">
-                                                                    ₹
-                                                                    {(
-                                                                        product.price *
-                                                                        88
-                                                                    ).toFixed(0)}
-                                                                </p>
+                                                            <p className="text-sm font-bold text-blue-600">
+                                                                ₹
+                                                                {(
+                                                                    product.price *
+                                                                    88
+                                                                ).toFixed(0)}
+                                                            </p>
 
-                                                                <p className="text-xs text-yellow-500">
-                                                                    ⭐ {product.rating}
-                                                                </p>
+                                                            <p className="text-xs text-yellow-500">
+                                                                ★ {product.rating}
+                                                            </p>
 
-                                                            </div>
+                                                        </div>
 
-                                                        </button>
-                                                    );
-                                                })}
-
-                                        </div>
-
-                                    </div>
-
-                                </div>
-                            )}
-
-                        {/* NO PRODUCT */}
-
-                        {searchType !== "ask" &&
-                            productQuery.isSuccess &&
-                            productQuery.data?.length === 0 &&
-                            productInput && (
-                                <div className="absolute bottom-full left-0 right-0 z-[9999] mb-2">
-
-                                    <div className="flex justify-center rounded-2xl border border-slate-200 bg-white p-10 shadow-2xl">
-
-                                        <div className="text-center">
-
-                                            <p className="font-semibold text-slate-700">
-                                                No products found
-                                            </p>
-
-                                            <p className="mt-1 text-sm text-slate-500">
-                                                Try another product name.
-                                            </p>
-
-                                        </div>
+                                                    </button>
+                                                );
+                                            })}
 
                                     </div>
 
                                 </div>
-                            )}
 
-                        <AiSearchInput
-                            selectedType={searchType}
-                            onTypeChange={handleTypeChange}
-                            onSearch={handleSearch}
-                            loading={
-                                askQuery.isLoading ||
-                                productQuery.isLoading
-                            }
-                            input={productInput}
-                            selectedProducts={selectedProducts}
-                            onInputChange={handleProductInput}
-                            onRemoveProduct={handleRemoveProduct}
-                        />
+                            </div>
+                        )}
 
-                    </div>
 
-                    <p className="mt-2 text-center text-[11px] text-slate-400">
-                        Cartify Shopping Assistant
-                    </p>
+                    {/* NO PRODUCTS */}
 
-                </footer>
+                    {searchType !== "ask" &&
+                        productQuery.isSuccess &&
+                        productQuery.data?.length === 0 &&
+                        productInput && (
 
-            </div>
+                            <div className="absolute bottom-full left-0 right-0 z-[9999] mb-2">
+
+                                <div
+                                    className="
+                                        rounded-2xl
+                                        border border-slate-200
+                                        bg-white
+                                        p-8
+                                        text-center
+                                        shadow-2xl
+                                    "
+                                >
+
+                                    <p className="font-semibold text-slate-700">
+                                        No products found
+                                    </p>
+
+                                    <p className="mt-1 text-sm text-slate-500">
+                                        Try another product name.
+                                    </p>
+
+                                </div>
+
+                            </div>
+                        )}
+
+
+                    {/* INPUT */}
+
+                    <AiSearchInput
+                        selectedType={searchType}
+                        onTypeChange={handleTypeChange}
+                        onSearch={handleSearch}
+                        loading={
+                            askQuery.isLoading ||
+                            productQuery.isLoading
+                        }
+                        input={productInput}
+                        selectedProducts={selectedProducts}
+                        onInputChange={handleProductInput}
+                        onRemoveProduct={handleRemoveProduct}
+                    />
+
+                </div>
+
+
+                <p className="mt-2 text-center text-[10px] font-medium text-slate-400">
+                    Cartify Shopping Assistant
+                </p>
+
+            </footer>
 
         </div>
-    );
+    </div>
+);
 };
 
 export default AiShoppingModal;

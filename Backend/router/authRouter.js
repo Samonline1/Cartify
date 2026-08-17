@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express.Router();
+const { isLoggedIn } = require("../middleswares/middlesware");
+
 
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -32,19 +34,31 @@ router.post("/signup", async (req, res) => {
     }
 
     const token = jwt.sign(
-      { email: user.email, role: user.role || "user" },
-      jwtSecret
+      {
+        email: user.email,
+        id: user._id.toString(),
+        role: user.role || "user",
+      },
+      jwtSecret,
+      { expiresIn: "7d" }
     );
 
     res.cookie("token", token, {
       httpOnly: true,
       secure: isProduction,
       sameSite: isProduction ? "none" : "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000 ,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
       path: "/"
     });
 
-    res.json({ msg: "Signup success", user });
+    const safeUser = await userModel
+      .findById(user._id)
+      .select("-password");
+
+    res.json({
+      msg: "Login success",
+      user: safeUser
+    });
   } catch (err) {
     res.status(500).json({ msg: "Error", err });
   }
@@ -64,19 +78,32 @@ router.post("/login", async (req, res) => {
     }
 
     const token = jwt.sign(
-      { email: user.email, role: user.role || "user" },
-      jwtSecret
+      {
+        email: user.email,
+        id: user._id.toString(),
+        role: user.role || "user",
+      },
+      jwtSecret,
+      { expiresIn: "7d" }
     );
 
     res.cookie("token", token, {
       httpOnly: true,
       secure: isProduction,
       sameSite: isProduction ? "none" : "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000 ,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
       path: "/"
     });
 
-    res.json({ msg: "Login success", user });
+
+     const safeUser = await userModel
+      .findById(user._id)
+      .select("-password");
+
+    res.json({
+      msg: "Login success",
+      user: safeUser
+    });
 
   } catch (err) {
     res.status(500).json({ msg: "Error" });
@@ -84,8 +111,37 @@ router.post("/login", async (req, res) => {
 });
 
 router.get("/logout", (req, res) => {
-  res.clearCookie("token");
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
+    path: "/",
+
+  });
+
+
   res.json({ msg: "Logged out" });
 });
+
+
+router.get("/me", isLoggedIn, async (req, res) => {
+  try {
+    const user = await userModel.findById(req.user.id).select("-password");
+
+    if (!user) {
+      return res.status(404).json({
+        msg: "User not found",
+      });
+    }
+
+    res.json({ user });
+  } catch (error) {
+    res.status(500).json({
+      msg: "Server error",
+    });
+  }
+});
+
+
 
 module.exports = router;

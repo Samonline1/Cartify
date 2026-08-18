@@ -47,7 +47,7 @@ const ProductDetails = () => {
         });
       } catch (error) {
         // User cancelled the share dialog
-        console.log("Share cancelled");
+        toast.error("Share cancelled");
       }
     } else {
       await navigator.clipboard.writeText(url);

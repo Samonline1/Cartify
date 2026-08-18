@@ -16,6 +16,8 @@ import { useNavigate } from "react-router-dom";
 const HomeHero = ({ product, products, activeIndex, onPrev, onNext, onDotClick, onOpenProduct }) => {
   if (!product) return null;
 
+  const navigate = useNavigate();
+
   // quick links
   const shortcuts = [
     {

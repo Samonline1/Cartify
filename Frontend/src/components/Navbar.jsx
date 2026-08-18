@@ -26,12 +26,18 @@ const {
   const { user, setUser } = useAuth();
 
 
-  const filter = product?.filter((p) =>
-    p.title
-      .toLowerCase()
-      .split(" ")
-      .some((word) => word.startsWith(debouncedSearch.toLowerCase())),
-  );
+  const products = Array.isArray(product)
+    ? product
+    : product?.products ?? [];
+
+const filter = products.filter((p) =>
+    p?.title
+        ?.toLowerCase()
+        .split(/\s+/)
+        .some((word) =>
+            word.startsWith(debouncedSearch.toLowerCase())
+        )
+);
 
 
   // category list

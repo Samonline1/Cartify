@@ -13,9 +13,8 @@ const AskSearchResults = ({ data }) => {
         total = 0,
     } = data;
 
-    // --------------------------------------------------
-    // Pagination
-    // --------------------------------------------------
+    // // Pagination
+
 
     const PRODUCTS_PER_PAGE = 4;
 
@@ -43,9 +42,7 @@ const AskSearchResults = ({ data }) => {
         }
     };
 
-    // --------------------------------------------------
-    // Filters
-    // --------------------------------------------------
+    // // Filters
 
     const filterTags = [];
 
@@ -99,7 +96,7 @@ const AskSearchResults = ({ data }) => {
 
             <div className="rounded-2xl py-5 ">
 
-               <div className="flex items-start gap-3">
+            <div className="flex items-start gap-3">
 
     {/* Message */}
     <div className="max-w-[85%]">

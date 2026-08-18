@@ -29,12 +29,26 @@ const SearchResults = () => {
   const endIndex = startIndex + pageSize;
 
 
-  const matching = useMemo(() => products.filter((p) =>
-    p.title
-      .toLowerCase()
-      .split(" ")
-      .some((word) => word.startsWith(name.toLowerCase())),
-  ), [name, products]);
+const matching = useMemo(() => {
+    if (!Array.isArray(products) || !name?.trim()) {
+        return [];
+    }
+
+    const search = name.trim().toLowerCase();
+
+    return products.filter((p) => {
+        const title = p?.title;
+
+        if (typeof title !== "string") {
+            return false;
+        }
+
+        return title
+            .toLowerCase()
+            .split(/\s+/)
+            .some((word) => word.startsWith(search));
+    });
+}, [name, products]);
 
   const pages = Math.ceil(matching.length / pageSize);
 

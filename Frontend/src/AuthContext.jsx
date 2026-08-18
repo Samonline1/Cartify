@@ -1,25 +1,44 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import API from "./api";
 
-// create context
+// Create context
 export const AuthContext = createContext();
 
-// provider
+// Provider
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
+    const checkAuth = async () => {
+      try {
+        // Browser automatically sends the HttpOnly token cookie
+        const res = await API.get("/auth/me");
+
+        setUser(res.data.user);
+      } catch (error) {
+        // No valid session / expired token
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkAuth();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, setUser }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        setUser,
+        loading,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
 
-// custom hook
+// Custom hook
 export const useAuth = () => useContext(AuthContext);

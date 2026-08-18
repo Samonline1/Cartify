@@ -62,7 +62,6 @@ const Cart = () => {
     0
   );
 
-  console.log(checkoutData)
 
   return (
     <main className="min-h-screen bg-[#f8fbff] px-4 py-7 text-slate-900 sm:px-6 lg:px-10 lg:py-10">

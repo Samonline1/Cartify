@@ -27,8 +27,7 @@ async function askSearch(req, res) {
     const products = await searchProductsService(parsedQuery);
 
 
-    // console.log("filter", filters)
-        // console.log("products", products)
+    // console.log("products", products)
 
     res.json({
       query,

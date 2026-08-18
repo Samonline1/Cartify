@@ -12,6 +12,7 @@ export function parseQuery(query) {
         sortBy: null,
     };
 
+
     // Category
     if (
         text.includes("phone") ||
@@ -35,7 +36,7 @@ export function parseQuery(query) {
     );
 
     if (maxPrice) {
-        result.maxPrice = Number(maxPrice[1]);
+        result.maxPrice = Number(maxPrice[1]) / 80;
     }
 
     // Minimum price
@@ -44,7 +45,7 @@ export function parseQuery(query) {
     );
 
     if (minPrice) {
-        result.minPrice = Number(minPrice[1]);
+        result.minPrice = Number(minPrice[1]) / 80;
     }
 
     // Rating
@@ -97,6 +98,7 @@ export function parseQuery(query) {
     ) {
         result.sortBy = "rating_desc";
     }
+
 
     return result;
 }

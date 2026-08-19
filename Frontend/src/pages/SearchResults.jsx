@@ -7,12 +7,14 @@ import Pagination from "../components/Pagination";
 import ProductQuickView from "../components/ProductQuickView"
 import { Eye } from "lucide-react";
 import { useProductSearch } from "../hooks/queries/useProductSearch";
+import { useAuth } from "../AuthContext";
 
 
 // search page
 const SearchResults = () => {
   const { name } = useParams();
   const navigate = useNavigate();
+  const { refreshAuth } = useAuth();
 
   const [selectedProduct, setSelectedProduct] = useState(null);
 
@@ -69,6 +71,8 @@ const matching = useMemo(() => {
       toast.success(msg || "Added to cart!", {
         autoClose: 5000
       });
+
+      await refreshAuth();
 
     } catch (error) {
 

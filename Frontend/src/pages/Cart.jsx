@@ -1,14 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useCartItems, useCartTotal } from "../hooks/queries/useCartData";
 import { useCheckoutItems, useCheckoutTotal } from "../hooks/queries/useCheckoutData";
 import { useCartCheckout } from "../hooks/mutations/useCartCheckout";
 import { useDeleteCartItem } from "../hooks/mutations/useDeleteCartItem";
+import { useAuth } from "../AuthContext";
+
 
 const Cart = () => {
   const [activeTab, setActiveTab] = useState("cart");
   const [showThankYou, setShowThankYou] = useState(false);
+  const [checkoutLoad, setCheckOutLoad] = useState(false)
+  const [checkoutMessage, setCheckoutMessage] = useState(0);
+  const { refreshAuth } = useAuth();
+
+
 
   const navigate = useNavigate();
   const { data: cart = [], refetch: refetchCart } = useCartItems();
@@ -19,26 +26,66 @@ const Cart = () => {
   const deleteItemMutation = useDeleteCartItem();
 
   const checkout = async () => {
+    setCheckOutLoad(true);
+
     checkoutMutation.mutate(undefined, {
       onSuccess: async (data) => {
-        await refetchCart();
-        await refetchTotal();
-        await refetchCheckoutItems();
-        await refetchCheckoutTotal();
-
         setActiveTab("purchased");
+        setCheckOutLoad(false);
         setShowThankYou(true);
 
         toast.success(data?.msg || "Checkout successful", {
           autoClose: 5000,
         });
+
+        // Refresh data after success UI is already shown
+        await Promise.all([
+          refetchCart(),
+          refetchTotal(),
+          refetchCheckoutItems(),
+          refetchCheckoutTotal(),
+          refreshAuth(),
+        ]);
       },
+
       onError: (error) => {
         console.error("Error checkout:", error);
+        setCheckOutLoad(false);
         toast.error("Checkout failed");
       },
     });
   };
+
+
+  const checkoutMessages = [
+    {
+      title: "Cross-checking your account",
+      description: "Verifying your account details...",
+    },
+    {
+      title: "Confirming your address",
+      description: "Checking your delivery information...",
+    },
+    {
+      title: "Securing your order",
+      description: "Finalizing your purchase...",
+    },
+  ];
+
+  useEffect(() => {
+    if (!checkoutLoad) {
+      setCheckoutMessage(0);
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setCheckoutMessage((prev) =>
+        prev === checkoutMessages.length - 1 ? 0 : prev + 1
+      );
+    }, 1800);
+
+    return () => clearInterval(interval);
+  }, [checkoutLoad]);
 
   const deleteItem = async (id) => {
     deleteItemMutation.mutate(id, {
@@ -68,7 +115,7 @@ const Cart = () => {
 
       <div className="mx-auto max-w-6xl">
 
-            {/* HEADER */}
+        {/* HEADER */}
 
         <div className="mb-7 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
 
@@ -97,19 +144,17 @@ const Cart = () => {
 
             <button
               onClick={() => setActiveTab("cart")}
-              className={`rounded-xl px-5 py-2.5 text-sm font-bold transition ${
-                activeTab === "cart"
-                  ? "bg-blue-500 text-white shadow-sm"
-                  : "text-slate-500 hover:bg-blue-50 hover:text-blue-500"
-              }`}
+              className={`rounded-xl px-5 py-2.5 text-sm font-bold transition ${activeTab === "cart"
+                ? "bg-blue-500 text-white shadow-sm"
+                : "text-slate-500 hover:bg-blue-50 hover:text-blue-500"
+                }`}
             >
               Cart
               <span
-                className={`ml-2 rounded-full px-2 py-0.5 text-xs ${
-                  activeTab === "cart"
-                    ? "bg-white/20 text-white"
-                    : "bg-blue-50 text-blue-500"
-                }`}
+                className={`ml-2 rounded-full px-2 py-0.5 text-xs ${activeTab === "cart"
+                  ? "bg-white/20 text-white"
+                  : "bg-blue-50 text-blue-500"
+                  }`}
               >
                 {cartCount}
               </span>
@@ -117,11 +162,10 @@ const Cart = () => {
 
             <button
               onClick={() => setActiveTab("purchased")}
-              className={`rounded-xl px-5 py-2.5 text-sm font-bold transition ${
-                activeTab === "purchased"
-                  ? "bg-blue-500 text-white shadow-sm"
-                  : "text-slate-500 hover:bg-blue-50 hover:text-blue-500"
-              }`}
+              className={`rounded-xl px-5 py-2.5 text-sm font-bold transition ${activeTab === "purchased"
+                ? "bg-blue-500 text-white shadow-sm"
+                : "text-slate-500 hover:bg-blue-50 hover:text-blue-500"
+                }`}
             >
               Purchased
             </button>
@@ -130,7 +174,7 @@ const Cart = () => {
         </div>
 
 
-            {/* CART */}
+        {/* CART */}
 
         {activeTab === "cart" && (
           <>
@@ -248,7 +292,7 @@ const Cart = () => {
                 </section>
 
 
-                    {/* ORDER SUMMARY */}
+                {/* ORDER SUMMARY */}
 
                 <aside className="h-fit lg:sticky lg:top-6">
 
@@ -380,7 +424,7 @@ const Cart = () => {
               </div>
             ) : (
 
-                //  EMPTY CART
+              //  EMPTY CART
 
               <div className="overflow-hidden rounded-3xl border border-blue-100 bg-white shadow-sm">
 
@@ -417,8 +461,67 @@ const Cart = () => {
           </>
         )}
 
+        {checkoutLoad && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-blue-950/40 px-4 backdrop-blur-sm">
+            <div className="relative w-full max-w-sm overflow-hidden rounded-3xl bg-white text-center shadow-2xl">
 
-            {/* PURCHASED */}
+              {/* Top */}
+              <div className="relative overflow-hidden bg-gradient-to-br from-blue-400 to-blue-600 px-6 py-8">
+
+                <div className="absolute -right-10 -top-12 h-32 w-32 rounded-full bg-white/10" />
+                <div className="absolute -bottom-16 -left-10 h-28 w-28 rounded-full bg-white/10" />
+
+                <div className="relative mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-yellow-300 shadow-lg">
+                  <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600" />
+                </div>
+
+                <h2 className="relative mt-5 text-2xl font-black text-white">
+                  Almost there...
+                </h2>
+
+                <p className="relative mt-1 text-sm text-blue-50">
+                  We're getting your order ready.
+                </p>
+
+              </div>
+
+
+              {/* Live status */}
+              <div className="px-6 py-7">
+
+                <div
+                  key={checkoutMessage}
+                  className="flex items-center gap-4 rounded-2xl bg-blue-50 px-4 py-4 text-left"
+                >
+
+                  {/* Spinner */}
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white shadow-sm">
+                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-blue-200 border-t-blue-600" />
+                  </div>
+
+                  {/* Changing text */}
+                  <div className="min-w-0">
+                    <p className="text-sm font-black text-slate-800">
+                      {checkoutMessages[checkoutMessage].title}
+                    </p>
+
+                    <p className="mt-1 text-xs text-slate-400">
+                      {checkoutMessages[checkoutMessage].description}
+                    </p>
+                  </div>
+
+                </div>
+
+                <p className="mt-5 text-xs text-slate-400">
+                  Please don't close this window.
+                </p>
+
+              </div>
+
+            </div>
+          </div>
+        )}
+        {/* PURCHASED */}
 
         {activeTab === "purchased" && (
           <>
@@ -592,7 +695,7 @@ const Cart = () => {
 
             ) : (
 
-                //  NO PURCHASES
+              //  NO PURCHASES
 
               <div className="overflow-hidden rounded-3xl border border-blue-100 bg-white shadow-sm">
 
@@ -630,7 +733,7 @@ const Cart = () => {
       </div>
 
 
-          {/* THANK YOU MODAL */}
+      {/* THANK YOU MODAL */}
 
       {showThankYou && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-blue-950/40 px-4 backdrop-blur-sm">

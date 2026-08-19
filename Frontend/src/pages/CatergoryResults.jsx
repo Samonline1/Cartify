@@ -7,6 +7,7 @@ import Pagination from "../components/Pagination";
 import ProductQuickView from "../components/ProductQuickView";
 import {Eye } from "lucide-react";
 import { useProductsByCategory } from "../hooks/queries/useProductsByCategory";
+import { useAuth } from "../AuthContext";
 
 // category results
 const CategoryResults = () => {
@@ -15,6 +16,7 @@ const CategoryResults = () => {
   const [open, setOpen] = useState(false);
 
   const { name } = useParams();
+  const { refreshAuth } = useAuth();
 
   // product data
   const { data: products = [], isLoading } = useProductsByCategory(name);
@@ -99,6 +101,8 @@ const CategoryResults = () => {
       toast.success(msg || "Added to cart!", {
         autoClose: 5000,
       });
+
+      await refreshAuth();
     } catch (error) {
       if (error.response?.status === 401) {
         toast.error(error.response.data.msg, {

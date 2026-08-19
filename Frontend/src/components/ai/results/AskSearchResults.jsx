@@ -63,7 +63,7 @@ const AskSearchResults = ({ data }) => {
     if (filters.maxPrice !== null && filters.maxPrice !== undefined) {
         filterTags.push({
             label: "Under",
-            value: `₹${filters.maxPrice}`,
+            value: `₹${filters.maxPrice * 80}`,
         });
     }
 
@@ -92,65 +92,65 @@ const AskSearchResults = ({ data }) => {
         <div className="mx-auto w-full max-w-6xl space-y-5">
 
 
-                {/* SEARCH SUMMARY */}
+            {/* SEARCH SUMMARY */}
 
             <div className="rounded-2xl py-5 ">
 
-            <div className="flex items-start gap-3">
+                <div className="flex items-start gap-3">
 
-    {/* Message */}
-    <div className="max-w-[85%]">
+                    {/* Message */}
+                    <div className="max-w-[85%]">
 
-        <div className="rounded-2xl rounded-tl-md bg-slate-100 px-4 py-3">
-<div className="flex gap-2">
-
-
-
-{/* Assistant Avatar */}
-    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white shadow-sm">
-        <Sparkles size={15} />
-    </div>
-    
-          <div>
-              <p className="text-sm leading-6 text-slate-700">
-                I found{" "}
-                <span className="font-semibold text-slate-900">
-                    {total} product{total !== 1 ? "s" : ""}
-                </span>{" "}
-                matching your search for{" "}
-                <span className="font-semibold text-blue-600">
-                    "{query}"
-                </span>
-                .
-            </p>
+                        <div className="rounded-2xl rounded-tl-md bg-slate-100 px-4 py-3">
+                            <div className="flex gap-2">
 
 
-              {/* Filters */}
-            {filterTags.length > 0 && (
-                <div className="mt-3 flex flex-wrap gap-1.5">
-                    {filterTags.map((filter, index) => (
-                        <span
-                            key={`${filter.label}-${index}`}
-                            className="rounded-full bg-white px-2.5 py-1 text-[11px] font-medium text-slate-600 shadow-sm ring-1 ring-slate-200"
-                        >
-                            {filter.label}:{" "}
-                            <span className="font-semibold text-slate-800">
-                                {filter.value}
-                            </span>
-                        </span>
-                    ))}
+
+                                {/* Assistant Avatar */}
+                                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white shadow-sm">
+                                    <Sparkles size={15} />
+                                </div>
+
+                                <div>
+                                    <p className="text-sm leading-6 text-slate-700">
+                                        I found{" "}
+                                        <span className="font-semibold text-slate-900">
+                                            {total} product{total !== 1 ? "s" : ""}
+                                        </span>{" "}
+                                        matching your search for{" "}
+                                        <span className="font-semibold text-blue-600">
+                                            "{query}"
+                                        </span>
+                                        .
+                                    </p>
+
+
+                                    {/* Filters */}
+                                    {filterTags.length > 0 && (
+                                        <div className="mt-3 flex flex-wrap gap-1.5">
+                                            {filterTags.map((filter, index) => (
+                                                <span
+                                                    key={`${filter.label}-${index}`}
+                                                    className="rounded-full bg-white px-2.5 py-1 text-[11px] font-medium text-slate-600 shadow-sm ring-1 ring-slate-200"
+                                                >
+                                                    {filter.label}:{" "}
+                                                    <span className="font-semibold text-slate-800">
+                                                        {filter.value}
+                                                    </span>
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )}
+
+                                </div>
+
+                            </div>
+
+
+                        </div>
+
+                    </div>
                 </div>
-            )}
-            
-          </div>
-
-          </div>
-
-
-        </div>
-
-    </div>
-</div>
 
 
 
@@ -158,7 +158,7 @@ const AskSearchResults = ({ data }) => {
 
 
 
-                {/* PRODUCTS */}
+            {/* PRODUCTS */}
 
             {products.length === 0 ? (
 
@@ -247,7 +247,7 @@ const AskSearchResults = ({ data }) => {
                     </div>
 
 
-                        {/* HORIZONTAL PRODUCT SCROLLER */}
+                    {/* HORIZONTAL PRODUCT SCROLLER */}
 
                     <div className="overflow-x-auto scrollbar-hide">
 
@@ -341,7 +341,7 @@ const AskSearchResults = ({ data }) => {
                                         <div className="mt-3 flex items-center gap-2">
 
                                             <span className="text-lg font-black text-blue-600">
-                                                ₹{(product.price * 88).toFixed(0)}
+                                                ₹{(product.price * 80).toFixed(0)}
                                             </span>
 
                                             {product.discountPercentage > 0 && (
@@ -363,10 +363,9 @@ const AskSearchResults = ({ data }) => {
                                             <span
                                                 className={`
                                                     text-[11px] font-semibold
-                                                    ${
-                                                        product.stock > 0
-                                                            ? "text-green-600"
-                                                            : "text-red-500"
+                                                    ${product.stock > 0
+                                                        ? "text-green-600"
+                                                        : "text-red-500"
                                                     }
                                                 `}
                                             >

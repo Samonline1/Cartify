@@ -3,6 +3,7 @@ import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import API from "../api";
 import { Share2 } from "lucide-react";
+import { useAuth } from "../AuthContext";
 
 const swatchColors = ["#f1239e", "#2663ff", "#f97316", "#0ea5e9"];
 const sizes = ["S", "M", "L"];
@@ -16,6 +17,7 @@ const ProductDetails = () => {
   const [activeSize, setActiveSize] = useState("M");
   const [activeColor, setActiveColor] = useState(swatchColors[0]);
   const navigate = useNavigate();
+  const { refreshAuth } = useAuth();
 
   useEffect(() => {
     const load = async () => {
@@ -66,6 +68,8 @@ const ProductDetails = () => {
       toast.success(msg || "Added to cart!", {
         autoClose: 5000,
       });
+
+      await refreshAuth();
     } catch (error) {
       if (error.response?.status === 401) {
         toast.error(error.response.data.msg, {

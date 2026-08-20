@@ -46,6 +46,8 @@ const HomeHero = ({ product, products, activeIndex, onPrev, onNext, onDotClick, 
     },
   ];
 
+  console.log(product.images)
+
   return (
     <section className="relative overflow-hidden bg-gradient-to-t from-white/90 to-blue-400">
 
@@ -97,14 +99,14 @@ const HomeHero = ({ product, products, activeIndex, onPrev, onNext, onDotClick, 
 
         {/* RIGHT */}
         <div
-          className="absolute right-0 top-0 h-full w-[55%] cursor-pointer lg:w-1/2"
+          className="hidden lg:block absolute right-0 top-0 h-full w-[55%] cursor-pointer lg:w-1/2"
           onClick={() => onOpenProduct(product)}
         >
 
           <img
-            src={product.thumbnail}
+            src={product?.images[0] || product?.thumbnail}
             alt={product.title}
-            className="h-full w-full object-contain object-center opacity-50 lg:opacity-95 transition-transform duration-700 hover:scale-105"
+            className="h-full w-full object-contain object-center lg:opacity-95 transition-transform duration-700 hover:scale-105"
           />
         </div>
 

@@ -259,7 +259,7 @@ const ProductDetails = () => {
 
           <button
             onClick={() => addtoCart(product.id)}
-            className="mt-2 w-full sm:w-auto px-6 py-3 rounded-full bg-slate-900 text-white font-semibold hover:bg-slate-800 transition"
+            className="shine mt-2 w-full sm:w-auto px-6 py-3 rounded-full bg-slate-900 text-white font-semibold hover:bg-slate-800 transition"
           >
             Add to cart
           </button>

@@ -140,3 +140,49 @@ button {
   border-color: #ef4444 !important;
   color: #b91c1c !important;
 }
+
+
+@keyframes shine {
+  0% {
+    transform: translateX(-150%) skewX(-20deg);
+  }
+
+  100% {
+    transform: translateX(300%) skewX(-20deg);
+  }
+}
+
+.shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.35),
+    transparent
+  );
+  animation: shine 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+
+@keyframes popIn {
+  0% {
+    transform: scale(1);
+  }
+
+  70% {
+    transform: scale(1.4);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}

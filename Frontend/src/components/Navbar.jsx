@@ -3,7 +3,6 @@ import toast from "react-hot-toast";
 import { BsSearch } from "react-icons/bs";
 import { LuShoppingCart } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
-import {Link} from "react-router-dom";
 import { useAuth } from "../AuthContext";
 import { CgProfile } from "react-icons/cg";
 import { useProductByName } from "../hooks/queries/useProductName";
@@ -39,8 +38,6 @@ const filter = products.filter((p) =>
         )
 );
 
-
-  // category list
   // const categories = [
   //   "smartphones",
   //   "laptops",

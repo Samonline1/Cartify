@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 import AiShoppingModal from "./AiShoppingModal";
 
 const messages = [
-    "Compare products side by side",
-    "Check what buyers reviewed",
-    "Ask anything to find the right product",
+    "Compare products",
+    "Check reviews",
+    "Ask anything",
     "Find products based on your preferences",
 ];
 

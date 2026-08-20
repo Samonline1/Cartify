@@ -16,7 +16,8 @@ import { useDebounce } from "../hooks/useDebounce";
 const NavbarMobile = () => {
   const navigate = useNavigate();
 
-  const { user, setUser } = useAuth();
+  const { user } = useAuth();
+
   // search text
   const [input, setInput] = useState("");
 
@@ -118,11 +119,11 @@ const NavbarMobile = () => {
               <LuShoppingCart className="text-lg" />
 
               {/*  cart count */}
-              {/*
+          
           <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[9px] font-bold text-white">
-            2
+            {user?.cart?.length}
           </span>
-          */}
+        
             </button>
           </div>
         </div>
@@ -293,7 +294,7 @@ const NavbarMobile = () => {
                 </div>
               )}
 
-              {/* ================= RESULTS ================= */}
+              {/* ================= Debounce RESULTS ================= */}
 
               {!isLoading && !error && filter?.length > 0 && (
                 <div className="max-h-[380px] overflow-y-auto p-2 scrollbar-hide">

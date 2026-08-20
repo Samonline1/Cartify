@@ -378,7 +378,7 @@ const Cart = () => {
 
                       <button
                         onClick={checkout}
-                        className="mt-6 w-full rounded-xl bg-yellow-400 px-5 py-4 text-sm font-black text-blue-900 shadow-[0_4px_0px_#ca8a04] transition hover:-translate-y-0.5 hover:bg-yellow-300 hover:shadow-[0_6px_0px_#ca8a04] active:translate-y-0 active:shadow-[0_2px_0px_#ca8a04]"
+                        className="shine mt-6 w-full rounded-xl bg-yellow-400 px-5 py-4 text-sm font-black text-blue-900 shadow-[0_4px_0px_#ca8a04] transition hover:-translate-y-0.5 hover:bg-yellow-300 hover:shadow-[0_6px_0px_#ca8a04] active:translate-y-0 active:shadow-[0_2px_0px_#ca8a04]"
                       >
                         Proceed to Checkout →
                       </button>

@@ -9,6 +9,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import Profile from "./pages/Profile";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
+import NotFound from "./components/NotFound"
 import Layout from "./components/Layout";
 import { useAuth } from "./AuthContext";
 import { Navigate } from "react-router-dom";
@@ -37,9 +38,11 @@ const router = createBrowserRouter([
       { path: "/profile", element: <Profile /> },
       { path: "/cart", element: <Cart /> },
       { path: "/checkout", element: <Checkout /> },
+      { path: "*", element: <NotFound /> },
+
     ],
   },
-  
+
   {
     path: "/login",
     element: <SignUp />,

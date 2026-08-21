@@ -146,6 +146,7 @@ const ProductDetails = () => {
     );
   }
 
+
   if (!product) {
     return (
       <div className="w-full min-h-screen flex items-center justify-center bg-slate-50 text-slate-700">
@@ -205,12 +206,16 @@ const ProductDetails = () => {
           <p className="text-3xl font-black">
             ₹{(product.price * 80).toFixed(0)}
           </p>
-          <p className="text-sm text-slate-500">Free shipping over ₹50</p>
           <h1 className="text-3xl sm:text-4xl font-black leading-tight">
             {product.title || "Handcrafted ceramic vase."}
           </h1>
           <p className="text-sm text-slate-600">
             Minimal form · Timeless elegance
+          </p>
+
+          <p className="text-sm text-slate-500">Free shipping over ₹50</p>
+          <p className="text-sm text-slate-500">
+            {product.shippingInformation}
           </p>
 
           <div className="space-y-2">
@@ -264,6 +269,132 @@ const ProductDetails = () => {
             Add to cart
           </button>
         </div>
+      </div>
+
+      {/* Reviews */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-10 pb-16">
+
+        <div className="border-t border-slate-100 pt-10">
+
+          {/* Header */}
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wider text-blue-500">
+                Customer feedback
+              </p>
+
+              <h2 className="mt-1 text-2xl font-black text-slate-900">
+                Reviews
+              </h2>
+
+              <p className="mt-1 text-sm text-slate-500">
+                What customers are saying about this product
+              </p>
+            </div>
+
+            {/* Rating summary */}
+            <div className="flex items-center gap-3 rounded-2xl bg-slate-50 px-4 py-3">
+
+              <div className="text-center">
+                <p className="text-2xl font-black text-slate-900">
+                  {product.rating?.toFixed(1)}
+                </p>
+
+                <div className="flex text-sm text-yellow-500">
+                  {"★★★★★"}
+                </div>
+              </div>
+
+              <div className="h-10 w-px bg-slate-200" />
+
+              <p className="text-xs font-semibold text-slate-500">
+                {product.reviews?.length || 0} reviews
+              </p>
+
+            </div>
+
+          </div>
+
+
+          {/* Reviews list */}
+          {product.reviews?.length > 0 ? (
+            <div className="mt-8 grid gap-4 md:grid-cols-2">
+
+              {product.reviews.map((review, index) => (
+                <div
+                  key={`${review.reviewerEmail}-${index}`}
+                  className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm"
+                >
+
+                  {/* User */}
+                  <div className="flex items-center justify-between gap-3">
+
+                    <div className="flex min-w-0 items-center gap-3">
+
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-50 text-sm font-black text-blue-600">
+                        {review.reviewerName?.charAt(0).toUpperCase()}
+                      </div>
+
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-bold text-slate-800">
+                          {review.reviewerName}
+                        </p>
+
+                        <p className="truncate text-[11px] text-slate-400">
+                          {review.reviewerEmail
+                            ? `${review.reviewerEmail.split("@")[0]}@cartify.com`
+                            : "customer@cartify.com"}
+                        </p>
+                      </div>
+
+                    </div>
+
+                    {/* Rating */}
+                    <div className="flex shrink-0 items-center gap-1 rounded-lg bg-yellow-50 px-2 py-1">
+                      <span className="text-xs text-yellow-500">★</span>
+
+                      <span className="text-xs font-black text-slate-700">
+                        {review.rating}
+                      </span>
+                    </div>
+
+                  </div>
+
+
+                  {/* Comment */}
+                  <p className="mt-4 text-sm leading-6 text-slate-600">
+                    {review.comment}
+                  </p>
+
+
+                  {/* Date */}
+                  <p className="mt-4 text-[11px] font-medium text-slate-400">
+                    {new Date(review.date).toLocaleDateString("en-IN", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </p>
+
+                </div>
+              ))}
+
+            </div>
+          ) : (
+            <div className="mt-8 rounded-2xl bg-slate-50 px-6 py-10 text-center">
+              <p className="font-bold text-slate-700">
+                No reviews yet
+              </p>
+
+              <p className="mt-1 text-sm text-slate-400">
+                Be the first to review this product.
+              </p>
+            </div>
+          )}
+
+        </div>
+
       </div>
     </div>
   );

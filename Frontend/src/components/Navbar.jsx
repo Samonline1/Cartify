@@ -81,7 +81,6 @@ const filter = products.filter((p) =>
     navigate(`/search/${name}/${id}`);
 
     setInput("");
-    setDebouncedSearch("");
   };
 
   // render nav

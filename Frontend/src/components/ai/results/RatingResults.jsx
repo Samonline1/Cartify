@@ -231,6 +231,12 @@ const RatingResults = ({ data }) => {
                                                 {review.reviewerName}
                                             </p>
 
+                                            <p className="truncate text-[11px] text-slate-400">
+  {review.reviewerEmail
+    ? `${review.reviewerEmail.split("@")[0]}@cartify.com`
+    : "customer@cartify.com"}
+</p>
+
                                             <p className="text-[11px] text-slate-400">
                                                 Verified customer
                                             </p>

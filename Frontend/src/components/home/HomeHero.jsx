@@ -46,7 +46,6 @@ const HomeHero = ({ product, products, activeIndex, onPrev, onNext, onDotClick, 
     },
   ];
 
-  console.log(product.images)
 
   return (
     <section className="relative overflow-hidden bg-gradient-to-t from-white/90 to-blue-400">

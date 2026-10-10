@@ -20,8 +20,14 @@ async function getProductById(id) {
   return response.data;
 }
 
+async function getAllProducts(limit = 0) {
+  const response = await axios.get(buildUrl(`?limit=${limit}`));
+  return response.data.products || [];
+}
+
 module.exports = {
   searchProducts,
   getProductsByCategory,
   getProductById,
+  getAllProducts,
 };

@@ -13,132 +13,87 @@ const {
   getCheckoutTotal,
 } = require("../services/cartService");
 
-const { parseQuery } = require("../search/queryParser")
-const { searchProductsService } = require("../search/productSearchService")
+const { parseQuery } = require("../search/queryParser");
+const { searchProductsService } = require("../search/productSearchService");
+const asyncHandler = require("../utils/asyncHandler");
+const ApiError = require("../utils/ApiError");
 
+const askSearch = asyncHandler(async (req, res) => {
+  const query = req.query.q || "";
+  const parsedQuery = await parseQuery(query);
+  const products = await searchProductsService(parsedQuery);
 
+  res.status(200).json({
+    query,
+    filters: parsedQuery,
+    total: products.length,
+    products,
+  });
+});
 
-async function askSearch(req, res) {
-  try {
-    const query = req.query.q || "";
+const search = asyncHandler(async (req, res) => {
+  const { q } = req.query;
+  if (!q) throw new ApiError(400, "Query is required");
+  const products = await searchProducts(q);
+  res.status(200).json(products);
+});
 
-    const parsedQuery = await parseQuery(query);
+const category = asyncHandler(async (req, res) => {
+  const products = await getProductsByCategory(req.params.category);
+  res.status(200).json(products);
+});
 
-    const products = await searchProductsService(parsedQuery);
+const product = asyncHandler(async (req, res) => {
+  const item = await getProductById(req.params.id);
+  if (!item) throw new ApiError(404, "Product not found");
+  res.status(200).json(item);
+});
 
+const addToCart = asyncHandler(async (req, res) => {
+  const productId = Number(req.params.id);
+  if (Number.isNaN(productId)) throw new ApiError(400, "Invalid product ID");
+  const user = await upsertCartItem(req.user.email, productId);
+  if (!user) throw new ApiError(404, "User not found");
+  res.status(200).json({ msg: "added to cart", cart: user.cart });
+});
 
-    // console.log("products", products)
+const deleteFromCart = asyncHandler(async (req, res) => {
+  const productId = Number(req.params.id);
+  if (Number.isNaN(productId)) throw new ApiError(400, "Invalid product ID");
+  const updatedUser = await removeCartItem(req.user.email, productId);
+  if (!updatedUser) throw new ApiError(404, "User not found");
+  res.status(200).json({ msg: "Removed from cart", cart: updatedUser.cart });
+});
 
-    res.json({
-      query,
-      filters: parsedQuery,
-      total: products.length,
-      products,
-    });
-  } catch (err) {
-    res.status(500).json({ msg: "Error searching", error: err.message });
-  }
-}
+const checkout = asyncHandler(async (req, res) => {
+  const result = await checkoutCart(req.user.email);
+  if (result.status !== 200) throw new ApiError(result.status, result.msg);
+  res.status(200).json({ msg: result.msg });
+});
 
-async function search(req, res) {
-  try {
-    const { q } = req.query;
-    if (!q) return res.status(400).json({ msg: "Query is required" });
-    const products = await searchProducts(q);
-    res.json(products);
-  } catch (err) {
-    res.status(500).json({ msg: "Error searching products", error: err.message });
-  }
-}
+const cartAll = asyncHandler(async (req, res) => {
+  const cart = await buildCartView(req.user.email);
+  if (!cart) throw new ApiError(404, "User not found");
+  res.status(200).json(cart);
+});
 
-async function category(req, res) {
-  try {
-    const products = await getProductsByCategory(req.params.category);
-    res.json(products);
-  } catch (err) {
-    res.status(500).json({ msg: "Error fetching category products", error: err.message });
-  }
-}
+const cartTotal = asyncHandler(async (req, res) => {
+  const total = await getCartTotal(req.user.email);
+  if (total == null) throw new ApiError(404, "User not found");
+  res.status(200).json({ total });
+});
 
-async function product(req, res) {
-  try {
-    const product = await getProductById(req.params.id);
-    res.json(product);
-  } catch (err) {
-    res.status(500).json({ msg: "Product not found", error: err.message });
-  }
-}
+const checkoutAll = asyncHandler(async (req, res) => {
+  const purchased = await getCheckoutHistory(req.user.email);
+  if (purchased == null) throw new ApiError(404, "User not found");
+  res.status(200).json(purchased);
+});
 
-async function addToCart(req, res) {
-  try {
-    const productId = Number(req.params.id);
-    const user = await upsertCartItem(req.user.email, productId);
-    if (!user) return res.status(404).json({ msg: "User not found" });
-    res.json({ msg: "added to cart", cart: user.cart });
-  } catch {
-    res.status(500).json({ msg: "Error updating cart" });
-  }
-}
-
-async function deleteFromCart(req, res) {
-  try {
-    const updatedUser = await removeCartItem(req.user.email, Number(req.params.id));
-    if (!updatedUser) return res.status(404).json({ msg: "User not found" });
-    res.json({ msg: "Removed from cart", cart: updatedUser.cart });
-  } catch {
-    res.status(500).json({ msg: "Error removing item" });
-  }
-}
-
-async function checkout(req, res) {
-  try {
-    const result = await checkoutCart(req.user.email);
-    if (result.status !== 200) return res.status(result.status).json({ msg: result.msg });
-    res.status(200).json({ msg: result.msg });
-  } catch {
-    res.status(500).json({ msg: "Error checkout!" });
-  }
-}
-
-async function cartAll(req, res) {
-  try {
-    const cart = await buildCartView(req.user.email);
-    if (!cart) return res.status(404).json({ msg: "User not found" });
-    res.json(cart);
-  } catch {
-    res.status(500).json({ msg: "Server error" });
-  }
-}
-
-async function cartTotal(req, res) {
-  try {
-    const total = await getCartTotal(req.user.email);
-    if (total == null) return res.status(404).json({ msg: "User not found" });
-    res.json({ total });
-  } catch (error) {
-    res.status(500).json({ msg: "err calculating total!", error });
-  }
-}
-
-async function checkoutAll(req, res) {
-  try {
-    const purchased = await getCheckoutHistory(req.user.email);
-    if (purchased == null) return res.status(404).json({ msg: "User not found" });
-    res.json(purchased);
-  } catch {
-    res.status(500).json({ msg: "Server error" });
-  }
-}
-
-async function checkoutTotal(req, res) {
-  try {
-    const total = await getCheckoutTotal(req.user.email);
-    if (total == null) return res.status(404).json({ msg: "User not found" });
-    res.json({ total });
-  } catch (error) {
-    res.status(500).json({ msg: "err calculating purchased!", error });
-  }
-}
+const checkoutTotal = asyncHandler(async (req, res) => {
+  const total = await getCheckoutTotal(req.user.email);
+  if (total == null) throw new ApiError(404, "User not found");
+  res.status(200).json({ total });
+});
 
 module.exports = {
   search,
@@ -151,5 +106,5 @@ module.exports = {
   cartTotal,
   checkoutAll,
   checkoutTotal,
-  askSearch
+  askSearch,
 };

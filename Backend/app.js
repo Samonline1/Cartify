@@ -1,20 +1,26 @@
+// Server entry point
 require("dotenv").config();
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
 const connectDB = require("./models/db");
+const { connectRedis } = require("./config/redis");
 const { notFoundHandler, errorHandler } = require("./middleswares/errorMiddleware");
 
-// app init
+// Express init
 const app = express();
 
-// parsers
+// Body parser
 app.use(express.json());
+
+// Cookie parser
 app.use(cookieParser());
+
+// Trust proxy
 app.set("trust proxy", 1);
 
-// cors
+// Allowed origins
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
@@ -23,6 +29,7 @@ const allowedOrigins = [
   process.env.CLIENT_URL,
 ].filter(Boolean);
 
+// CORS config
 app.use(
   cors({
     origin: function (origin, callback) {
@@ -38,27 +45,38 @@ app.use(
   })
 );
 
-// routes
+// Auth routes
 app.use("/api/auth", require("./router/authRouter"));
+
+// Admin routes
 app.use("/api/admin", require("./router/adminRouter"));
+
+// Product routes
 app.use("/api/products", require("./router/productsRouter"));
 
-// ping
+// Health ping
 app.get("/", (req, res) => {
   res.send("API running...");
 });
 
-// 404 & Centralized Error Handlers
+// 404 handler
 app.use(notFoundHandler);
+
+// Centralized errors
 app.use(errorHandler);
 
-// server startup
+// Port config
 const port = process.env.PORT || 5000;
 
+// Start server
 async function startServer() {
   try {
+    // Connect MongoDB
     await connectDB();
+    // Connect Redis (fail-open)
+    await connectRedis();
 
+    // Single listener
     app.listen(port, () => {
       console.log(`Server running on port ${port}`);
     });
@@ -68,6 +86,7 @@ async function startServer() {
   }
 }
 
+// Boot server
 startServer();
 
 module.exports = app;

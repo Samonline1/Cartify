@@ -1,8 +1,10 @@
+// Token utilities: JWT sign & HttpOnly cookie management
 const jwt = require("jsonwebtoken");
 
 const isProduction = process.env.NODE_ENV === "production";
 const jwtSecret = process.env.JWT_SECRET;
 
+// Sign token (7d expiry)
 function generateToken(user) {
   if (!jwtSecret) {
     throw new Error("JWT secret not configured");
@@ -19,6 +21,7 @@ function generateToken(user) {
   );
 }
 
+// Set cookie (HttpOnly)
 function sendTokenCookie(res, token) {
   res.cookie("token", token, {
     httpOnly: true,
@@ -29,6 +32,7 @@ function sendTokenCookie(res, token) {
   });
 }
 
+// Clear cookie
 function clearTokenCookie(res) {
   res.clearCookie("token", {
     httpOnly: true,

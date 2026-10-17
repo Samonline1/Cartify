@@ -1,18 +1,26 @@
+// Admin service: analytics, user management, product listings
 const bcrypt = require("bcrypt");
 const userModel = require("../models/user");
 const ApiError = require("../utils/ApiError");
 const { getAllProducts, searchProducts } = require("./catalogService");
+const cacheService = require("./cacheService");
 
+// TTL settings
+const DASHBOARD_TTL = 5 * 60; // 5 minutes
+
+// Admin login
 async function loginAdmin({ email, password }) {
   if (!email || !password) {
     throw new ApiError(400, "Email and password are required");
   }
 
+  // Find admin
   const user = await userModel.findOne({ email });
   if (!user || user.role !== "admin") {
     throw new ApiError(400, "Admin not found");
   }
 
+  // Compare hash
   const match = await bcrypt.compare(password, user.password);
   if (!match) {
     throw new ApiError(400, "Wrong password");
@@ -21,6 +29,7 @@ async function loginAdmin({ email, password }) {
   return user;
 }
 
+// Admin profile
 async function getAdminProfile(email) {
   const user = await userModel.findOne({ email }).select("-password");
   if (!user) {
@@ -29,42 +38,51 @@ async function getAdminProfile(email) {
   return user;
 }
 
+// Dashboard metrics (cached: 5m TTL)
 async function getDashboardStats() {
-  const [users, admins, products] = await Promise.all([
-    userModel.find({}).select("-password"),
-    userModel.countDocuments({ role: "admin" }),
-    getAllProducts(0),
-  ]);
+  const cacheKey = "admin:dashboard:stats";
 
-  const customers = users.filter((user) => user.role !== "admin");
-  const totalCartItems = users.reduce((sum, user) => {
-    return sum + (user.cart || []).reduce((cartSum, item) => cartSum + (item.quantity || 0), 0);
-  }, 0);
+  return cacheService.getOrSet(cacheKey, DASHBOARD_TTL, async () => {
+    // Parallel fetch
+    const [users, admins, products] = await Promise.all([
+      userModel.find({}).select("-password"),
+      userModel.countDocuments({ role: "admin" }),
+      getAllProducts(0),
+    ]);
 
-  const purchasedItems = users.flatMap((user) => user.purchased || []);
-  const totalOrders = purchasedItems.length;
-  const totalRevenue = purchasedItems.reduce(
-    (sum, item) => sum + (Number(item.price || 0) * Number(item.quantity || 0)),
-    0
-  );
+    // Compute stats
+    const customers = users.filter((user) => user.role !== "admin");
+    const totalCartItems = users.reduce((sum, user) => {
+      return sum + (user.cart || []).reduce((cartSum, item) => cartSum + (item.quantity || 0), 0);
+    }, 0);
 
-  const categories = [...new Set(products.map((product) => product.category))].length;
+    const purchasedItems = users.flatMap((user) => user.purchased || []);
+    const totalOrders = purchasedItems.length;
+    const totalRevenue = purchasedItems.reduce(
+      (sum, item) => sum + (Number(item.price || 0) * Number(item.quantity || 0)),
+      0
+    );
 
-  return {
-    totalUsers: customers.length,
-    totalAdmins: admins,
-    totalProducts: products.length,
-    totalCategories: categories,
-    totalCartItems,
-    totalOrders,
-    totalRevenue,
-  };
+    const categories = [...new Set(products.map((product) => product.category))].length;
+
+    return {
+      totalUsers: customers.length,
+      totalAdmins: admins,
+      totalProducts: products.length,
+      totalCategories: categories,
+      totalCartItems,
+      totalOrders,
+      totalRevenue,
+    };
+  });
 }
 
+// User list
 async function getUsersList(query = "") {
   const q = (query || "").trim().toLowerCase();
   const users = await userModel.find({}).select("-password");
 
+  // Filter list
   const filtered = q
     ? users.filter((user) => {
         const haystack = `${user.name || ""} ${user.email || ""}`.toLowerCase();
@@ -72,6 +90,7 @@ async function getUsersList(query = "") {
       })
     : users;
 
+  // Map users
   return filtered.map((user) => ({
     _id: user._id,
     name: user.name,
@@ -82,6 +101,7 @@ async function getUsersList(query = "") {
   }));
 }
 
+// User detail
 async function getUserDetails(id) {
   const user = await userModel.findById(id).select("-password");
   if (!user) {
@@ -90,12 +110,14 @@ async function getUserDetails(id) {
   return user;
 }
 
+// Delete user
 async function deleteUser(id) {
   const user = await userModel.findById(id);
   if (!user) {
     throw new ApiError(404, "User not found");
   }
 
+  // Protect admin
   if (user.role === "admin") {
     throw new ApiError(400, "Admin users cannot be deleted");
   }
@@ -103,13 +125,16 @@ async function deleteUser(id) {
   await userModel.findByIdAndDelete(id);
 }
 
+// Catalog listing
 async function getAdminProducts({ q = "", category = "", sort = "title" }) {
   let products = q ? await searchProducts(q) : await getAllProducts(0);
 
+  // Category filter
   if (category) {
     products = products.filter((product) => product.category === category);
   }
 
+  // Sorter rules
   const sorters = {
     title: (a, b) => a.title.localeCompare(b.title),
     price: (a, b) => a.price - b.price,

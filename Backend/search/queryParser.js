@@ -1,6 +1,4 @@
-
-
-export function parseQuery(query) {
+function parseQuery(query) {
     const text = query.toLowerCase().trim();
 
     const result = {
@@ -102,4 +100,8 @@ export function parseQuery(query) {
 
     return result;
 }
+
+module.exports = {
+    parseQuery
+};
 
